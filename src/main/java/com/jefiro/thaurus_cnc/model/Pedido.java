@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 
 @Data
@@ -23,8 +24,8 @@ public class Pedido {
     private Cliente cliente;
     private String produto_id;
     private String produto_nome;
-    @Embedded
-    private Personalizacao personalizacao;
+    @Convert(converter = MapToJsonConverter.class)
+    private Map<String,Object> personalizacao;
     private Double valor;
     private Double frete;
     @Enumerated(EnumType.STRING)

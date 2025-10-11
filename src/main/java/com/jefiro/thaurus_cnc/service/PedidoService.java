@@ -36,4 +36,14 @@ public class PedidoService {
 
         return pedidoRepository.save(pedidoEntity);
     }
+
+    public Pedido newPedido(Long idCliente, PedidoDTO pedido) {
+        if (idCliente == null || pedido == null) {
+            throw new IllegalArgumentException("idCliente e pedido devem ser informados");
+        }
+        Cliente cliente = clienteService.findById(idCliente);
+        Pedido pedidoEntity = new Pedido(pedido);
+        pedidoEntity.setCliente(cliente);
+        return pedidoRepository.save(pedidoEntity);
+    }
 }
