@@ -22,26 +22,27 @@ public class Pedido {
     private Long id;
     @ManyToOne
     private Cliente cliente;
-    private String produto_id;
-    private String produto_nome;
+    @ManyToOne
+    private Produto produto;
     @Convert(converter = MapToJsonConverter.class)
     private Map<String,Object> personalizacao;
     private Double valor;
     private Double frete;
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
-    LocalDateTime data_pedido;
-    LocalDateTime data_finalizacao;
+    private LocalDateTime data_pedido;
+    private LocalDateTime data_finalizacao;
+    private boolean ativo;
+
 
     public Pedido(PedidoDTO dto) {
         this.cliente = dto.cliente();
-        this.produto_id = dto.produto_id();
-        this.produto_nome = dto.produto_nome();
         this.personalizacao = dto.personalizacao();
         this.valor = dto.valor();
         this.frete = dto.frete();
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();
         this.data_finalizacao = LocalDateTime.now();
+        this.ativo = true;
     }
 }

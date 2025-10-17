@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/clientes")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<?> novo(@RequestBody ClienteDTO dto) {
         return ResponseEntity.ok().body(clienteService.novo(dto));
     }

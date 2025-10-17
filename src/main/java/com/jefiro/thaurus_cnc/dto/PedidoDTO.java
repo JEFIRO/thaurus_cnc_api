@@ -7,8 +7,7 @@ import java.util.Map;
 
 public record PedidoDTO(
         Cliente cliente,
-        String produto_id,
-        String produto_nome,
+        Long produto_id,
         Map<String,Object> personalizacao,
         Double valor,
         Double frete) {

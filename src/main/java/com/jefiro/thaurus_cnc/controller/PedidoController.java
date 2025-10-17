@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/pedidos")
 public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
@@ -21,7 +21,32 @@ public class PedidoController {
 
     @PostMapping("/{id_cliente}")
     public ResponseEntity<Pedido> pedidoRepository(@PathVariable Long id_cliente, @RequestBody PedidoDTO pedido) {
-        return ResponseEntity.ok().body(pedidoService.newPedido(id_cliente,pedido));
+        return ResponseEntity.ok().body(pedidoService.newPedido(id_cliente, pedido));
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> listar() {
+        return ResponseEntity.ok().body(pedidoService.listar());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(pedidoService.get(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoService.delete(id));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> delete() {
+        return ResponseEntity.ok(pedidoService.deleteAll());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PedidoDTO dto) {
+        return ResponseEntity.ok().body(pedidoService.update(id, dto));
     }
 
 }
