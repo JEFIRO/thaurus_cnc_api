@@ -15,7 +15,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping
-    public ResponseEntity<Pedido> pedidoRepository(@RequestBody NewPedido pedido) {
+    public ResponseEntity<?> pedidoRepository(@RequestBody NewPedido pedido) {
         return ResponseEntity.ok().body(pedidoService.newPedido(pedido));
     }
 

@@ -1,18 +1,20 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.PedidoItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+
 
 @Table
 @Entity
@@ -22,10 +24,8 @@ public class Pedido {
     private Long id;
     @ManyToOne
     private Cliente cliente;
-    @ManyToOne
-    private Produto produto;
-    @Convert(converter = MapToJsonConverter.class)
-    private Map<String,Object> personalizacao;
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PedidoItem> itens;
     private Double valor;
     private Double frete;
     @Enumerated(EnumType.STRING)
@@ -34,15 +34,26 @@ public class Pedido {
     private LocalDateTime data_finalizacao;
     private boolean ativo;
 
-
-    public Pedido(PedidoDTO dto) {
-        this.cliente = dto.cliente();
-        this.personalizacao = dto.personalizacao();
-        this.valor = dto.valor();
-        this.frete = dto.frete();
+    public Pedido() {
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();
         this.data_finalizacao = LocalDateTime.now();
         this.ativo = true;
     }
+
+    public Pedido(PedidoItem dto) {
+        this.itens = List.of(dto);
+        this.valor = dto.getValor();
+        this.status = StatusPedido.LAYOUT_PENDING;
+        this.data_pedido = LocalDateTime.now();
+        this.data_finalizacao = LocalDateTime.now();
+        this.ativo = true;
+    }
+    public Pedido(PedidoDTO dto){
+        this.status = StatusPedido.LAYOUT_PENDING;
+        this.data_pedido = LocalDateTime.now();
+        this.data_finalizacao = LocalDateTime.now();
+        this.ativo = true;
+    }
+
 }

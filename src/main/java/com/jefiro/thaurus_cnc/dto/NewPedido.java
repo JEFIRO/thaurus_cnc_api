@@ -1,7 +1,10 @@
 package com.jefiro.thaurus_cnc.dto;
 
+import java.util.List;
+
 public record NewPedido(
-    ClienteDTO clienteDTO,
-    PedidoDTO pedidoDTO
+        ClienteDTO clienteDTO,
+        List<PedidoDTO> pedidoDTO,
+        Double frete
 ) {
 }
