@@ -2,11 +2,15 @@ package com.jefiro.thaurus_cnc.controller;
 
 import com.jefiro.thaurus_cnc.dto.NewPedido;
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.PedidoResponse;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -20,9 +24,17 @@ public class PedidoController {
     }
 
     @PostMapping("/{id_cliente}")
-    public ResponseEntity<Pedido> pedidoRepository(@PathVariable Long id_cliente, @RequestBody PedidoDTO pedido) {
-        return ResponseEntity.ok().body(pedidoService.newPedido(id_cliente, pedido));
+    public ResponseEntity<PedidoResponse> criarPedido(
+            @PathVariable Long id_cliente,
+            @RequestBody List<PedidoDTO> pedidosDTO) {
+
+        // Chama o serviço que cria o pedido
+        PedidoResponse pedidoCriado = pedidoService.newPedido(id_cliente, pedidosDTO);
+
+        // Retorna 201 CREATED com o pedido criado
+        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCriado);
     }
+
 
     @GetMapping()
     public ResponseEntity<?> listar() {
@@ -45,7 +57,7 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PedidoDTO dto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody List<PedidoDTO> dto) {
         return ResponseEntity.ok().body(pedidoService.update(id, dto));
     }
 

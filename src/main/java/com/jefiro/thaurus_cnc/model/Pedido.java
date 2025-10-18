@@ -1,15 +1,12 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
-import com.jefiro.thaurus_cnc.dto.PedidoItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 
 @Data
@@ -41,15 +38,7 @@ public class Pedido {
         this.ativo = true;
     }
 
-    public Pedido(PedidoItem dto) {
-        this.itens = List.of(dto);
-        this.valor = dto.getValor();
-        this.status = StatusPedido.LAYOUT_PENDING;
-        this.data_pedido = LocalDateTime.now();
-        this.data_finalizacao = LocalDateTime.now();
-        this.ativo = true;
-    }
-    public Pedido(PedidoDTO dto){
+    public Pedido(PedidoDTO dto) {
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();
         this.data_finalizacao = LocalDateTime.now();

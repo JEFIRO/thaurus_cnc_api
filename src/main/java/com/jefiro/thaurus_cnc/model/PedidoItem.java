@@ -26,6 +26,9 @@ public class PedidoItem {
     @ManyToOne
     private Produto produto;
 
+    @ManyToOne
+    private Variante variante;
+
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, Object> personalizacao;
 

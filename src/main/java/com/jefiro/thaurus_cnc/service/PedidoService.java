@@ -1,12 +1,11 @@
 package com.jefiro.thaurus_cnc.service;
 
-import com.jefiro.thaurus_cnc.dto.ClienteDTO;
 import com.jefiro.thaurus_cnc.dto.NewPedido;
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
 import com.jefiro.thaurus_cnc.dto.PedidoResponse;
 import com.jefiro.thaurus_cnc.model.*;
 import com.jefiro.thaurus_cnc.repository.PedidoRepository;
-import org.springframework.beans.BeanUtils;
+import com.jefiro.thaurus_cnc.repository.VarianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,8 @@ public class PedidoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+    @Autowired
+    private VarianteRepository varianteRepository;
     @Autowired
     ClienteService clienteService;
     @Autowired
@@ -47,8 +48,11 @@ public class PedidoService {
         for (PedidoDTO dto : pedido.pedidoDTO()) {
             Produto produto = produtoService.get(dto.produto_id());
 
+
             PedidoItem item = new PedidoItem(dto, produto);
+            Variante variante = varianteRepository.findById(dto.variante()).orElseThrow(() -> new RuntimeException("Variante nao encontrada"));
             item.setPedido(pedidoEntity);
+            item.setVariante(variante);
             itens.add(item);
         }
 
@@ -62,28 +66,48 @@ public class PedidoService {
         return new PedidoResponse(pedidoEntity);
     }
 
-    public Pedido newPedido(Long idCliente, PedidoDTO pedido) {
-        if (idCliente == null || pedido == null || pedido.produto_id() == null) {
+    public PedidoResponse newPedido(Long idCliente, List<PedidoDTO> pedidoDTOS) {
+        if (idCliente == null || pedidoDTOS == null) {
             throw new IllegalArgumentException("idCliente e pedido devem ser informados");
         }
 
         Cliente cliente = clienteService.findById(idCliente);
-        Produto produto = produtoService.get(pedido.produto_id());
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        List<PedidoItem> itens = new ArrayList<>();
 
-        Pedido pedidoEntity = new Pedido(pedido);
+        Pedido finalPedido = pedido;
 
-        //pedidoEntity.setProduto(List.of(produto));
-        pedidoEntity.setCliente(cliente);
+        pedidoDTOS.forEach(dto -> {
+            Produto produto = produtoService.get(dto.produto_id());
+            PedidoItem item = new PedidoItem(dto, produto);
+            item.setPedido(finalPedido);
+            Variante variante = varianteRepository.findById(dto.variante()).orElseThrow(() -> new RuntimeException("Variante nao encontrada"));
+            item.setVariante(variante);
+            itens.add(item);
+        });
+        pedido.setItens(itens);
 
-        return pedidoRepository.save(pedidoEntity);
+        double total = itens.stream().mapToDouble(PedidoItem::getValor).sum();
+        pedido.setValor(total);
+
+        pedido.setFrete(pedidoDTOS.get(0).frete());
+        pedido = pedidoRepository.save(pedido);
+        return new PedidoResponse(pedido);
     }
 
-    public List<Pedido> listar() {
-        return pedidoRepository.findAllAtivos();
+    public List<PedidoResponse> listar() {
+
+        return pedidoRepository.findAllAtivos().stream().map(PedidoResponse::new).toList();
     }
 
-    public Pedido get(Long id) {
-        return pedidoRepository.getAtivos(id).orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
+    public PedidoResponse get(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
+        if (pedido != null) {
+            return new PedidoResponse(pedido);
+        } else {
+            throw new RuntimeException("Pedido nao encontrado");
+        }
     }
 
     public Boolean delete(Long id) {
@@ -106,14 +130,33 @@ public class PedidoService {
         }
     }
 
-    public Pedido update(Long id, PedidoDTO dto) {
-        if (dto == null) {
-            throw new IllegalArgumentException("Pedido nao pode ser nulo");
-        }
-        Pedido pedido = pedidoRepository.getAtivos(id).orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
-        BeanUtils.copyProperties(dto, pedido, "id");
-        return pedidoRepository.save(new Pedido(dto));
+    public Pedido update(Long pedidoId, List<PedidoDTO> dtoList) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
+        // Atualiza cliente se necessário
+        if (!dtoList.isEmpty() && dtoList.get(0).cliente() != null) {
+            pedido.setCliente(dtoList.get(0).cliente());
+        }
+
+        // Atualiza os itens
+        List<PedidoItem> itensAtualizados = dtoList.stream().map(dto -> {
+            Produto produto = produtoService.get(dto.produto_id());
+            PedidoItem item = new PedidoItem();
+            item.setProduto(produto);
+            item.setValor(dto.valor());
+            item.setPersonalizacao(dto.personalizacao());
+            item.setPedido(pedido);
+            return item;
+        }).toList();
+
+        pedido.getItens().clear();
+        pedido.getItens().addAll(itensAtualizados);
+
+
+        pedido.setValor(itensAtualizados.stream().mapToDouble(PedidoItem::getValor).sum());
+
+        return pedidoRepository.save(pedido);
     }
 
 }

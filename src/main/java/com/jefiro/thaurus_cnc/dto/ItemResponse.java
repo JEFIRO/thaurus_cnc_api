@@ -8,6 +8,7 @@ import java.util.Map;
 public record ItemResponse(
         Long id,
         Long produtoId,
+        Long variante,
         Map<String, Object> personalizacao,
         Double valor
 ) {
@@ -15,6 +16,7 @@ public record ItemResponse(
         this(
                 item.getId(),
                 item.getProduto().getId(),
+                item.getVariante().getId(),
                 item.getPersonalizacao(),
                 item.getValor()
         );

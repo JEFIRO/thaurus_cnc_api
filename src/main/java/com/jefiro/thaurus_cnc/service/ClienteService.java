@@ -47,7 +47,21 @@ public class ClienteService {
         }
         Cliente clienteEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente nao encontrado"));
 
-        BeanUtils.copyProperties(cliente, clienteEntity, "id");
+        if (cliente.nome() != null) {
+            clienteEntity.setNome(cliente.nome());
+        }
+        if (cliente.telefone() != null) {
+            clienteEntity.setTelefone(cliente.telefone());
+        }
+        if (cliente.cpf() != null) {
+            clienteEntity.setCpf(cliente.cpf());
+        }
+        if (cliente.email() != null) {
+            clienteEntity.setEmail(cliente.email());
+        }
+        if (cliente.endereco() != null) {
+            clienteEntity.setEndereco(cliente.endereco());
+        }
 
         return repository.save(clienteEntity);
     }
