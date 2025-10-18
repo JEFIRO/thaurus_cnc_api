@@ -3,7 +3,6 @@ package com.jefiro.thaurus_cnc.service;
 import com.jefiro.thaurus_cnc.dto.ProdutoDTO;
 import com.jefiro.thaurus_cnc.model.Produto;
 import com.jefiro.thaurus_cnc.repository.ProdutoRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,17 +47,21 @@ public class ProdutoService {
         }
 
         Produto produto = repository.findById(id).orElseThrow(() -> new RuntimeException("Produto nao encontrado"));
-
-        BeanUtils.copyProperties(dto, produto, "id");
-
-
-        if (dto.medida_embalegem() != null) {
-            produto.setMedida_embalagem(dto.medida_embalegem());
+        if (dto.nome() != null) {
+            produto.setNome(dto.nome());
         }
-        if (dto.medida_produto() != null) {
-            produto.setMedida_produto(dto.medida_produto());
+        if (dto.imagem() != null) {
+            produto.setImagem(dto.imagem());
         }
-
+        if (dto.descricao() != null) {
+            produto.setDescricao(dto.descricao());
+        }
+        if (dto.personalizacao() != null) {
+            produto.setPersonalizacao(dto.personalizacao());
+        }
+        if (dto.variantes() != null) {
+            produto.setVariantes(dto.variantes());
+        }
         return repository.save(produto);
     }
 

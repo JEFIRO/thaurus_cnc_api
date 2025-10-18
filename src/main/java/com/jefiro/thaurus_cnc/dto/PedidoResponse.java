@@ -6,7 +6,6 @@ import com.jefiro.thaurus_cnc.model.StatusPedido;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 public record PedidoResponse(
         Long id,
         List<ItemResponse> itens,
@@ -18,15 +17,15 @@ public record PedidoResponse(
         boolean ativo
 ) {
     public PedidoResponse(Pedido pedido) {
-        this(pedido.getId(),
-                pedido.getItens().stream()
-                        .map(ItemResponse::new)
-                        .toList(),
+        this(
+                pedido.getId(),
+                pedido.getItens().stream().map(ItemResponse::new).toList(),
                 pedido.getValor(),
                 pedido.getFrete(),
                 pedido.getStatus(),
                 pedido.getData_pedido(),
                 pedido.getData_finalizacao(),
-                pedido.isAtivo());
+                pedido.isAtivo()
+        );
     }
 }

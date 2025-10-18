@@ -7,13 +7,17 @@ import java.util.Map;
 
 public record ItemResponse(
         Long id,
-        PedidoResponse pedido,
-        Produto produto,
+        Long produtoId,
         Map<String, Object> personalizacao,
-        Double valor,
-        Double frete) {
+        Double valor
+) {
     public ItemResponse(PedidoItem item) {
-        this(item.getId(), new PedidoResponse(item.getPedido()), item.getProduto(), item.getPersonalizacao(), item.getValor(), item.getFrete());
-
+        this(
+                item.getId(),
+                item.getProduto().getId(),
+                item.getPersonalizacao(),
+                item.getValor()
+        );
     }
 }
+

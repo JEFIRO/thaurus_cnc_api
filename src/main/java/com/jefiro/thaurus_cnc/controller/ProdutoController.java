@@ -18,26 +18,32 @@ public class ProdutoController {
     public ResponseEntity<?> novo(@RequestBody ProdutoDTO dto) {
         return ResponseEntity.ok().body(service.novo(dto));
     }
+
     @PostMapping("list")
     public ResponseEntity<?> novo(@RequestBody List<ProdutoDTO> dto) {
         return ResponseEntity.ok().body(service.novo(dto));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(service.get(id));
     }
+
     @GetMapping
     public ResponseEntity<?> listar() {
         return ResponseEntity.ok().body(service.listar());
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
-        return ResponseEntity.ok().body(service.update(id,dto));
+        return ResponseEntity.ok().body(service.update(id, dto));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return ResponseEntity.ok(service.delete(id));
     }
+
     @DeleteMapping
     public ResponseEntity<?> delete() {
         return ResponseEntity.ok(service.delete());

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -21,25 +22,13 @@ public class Produto {
 
     private String nome;
     private String descricao;
-    private Double preco;
     private String imagem;
     private Boolean ativo;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "altura", column = @Column(name = "altura_produto")),
-            @AttributeOverride(name = "largura", column = @Column(name = "largura_produto")),
-            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_produto"))
-    })
-    private Medida medida_produto;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "produto_id")
+    private List<Variante> variantes;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "altura", column = @Column(name = "altura_embalagem")),
-            @AttributeOverride(name = "largura", column = @Column(name = "largura_embalagem")),
-            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_embalagem"))
-    })
-    private Medida medida_embalagem;
 
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, Object> personalizacao;
@@ -47,11 +36,11 @@ public class Produto {
     public Produto(ProdutoDTO dto) {
         this.nome = dto.nome();
         this.descricao = dto.descricao();
-        this.preco = dto.preco();
         this.imagem = dto.imagem();
-        this.medida_produto = dto.medida_produto();
-        this.medida_embalagem = dto.medida_embalegem();
+        this.variantes = dto.variantes();
         this.personalizacao = dto.personalizacao();
         this.ativo = true;
     }
+
+
 }

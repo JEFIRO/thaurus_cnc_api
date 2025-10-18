@@ -1,16 +1,15 @@
 package com.jefiro.thaurus_cnc.dto;
 
-import com.jefiro.thaurus_cnc.model.Medida;
+import com.jefiro.thaurus_cnc.model.Variante;
 
+import java.util.List;
 import java.util.Map;
 
 public record ProdutoDTO(
         String nome,
         String descricao,
-        Double preco,
         String imagem,
-        Medida medida_produto,
-        Medida medida_embalegem,
+        List<Variante> variantes,
         Map<String, Object> personalizacao
 ) {
 }
