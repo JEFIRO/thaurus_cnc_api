@@ -11,5 +11,7 @@ public record PedidoDTO(
         Long variante,
         Map<String,Object> personalizacao,
         Double valor,
-        Double frete) {
+        Double frete,
+        Integer quantidade) {
+
 }

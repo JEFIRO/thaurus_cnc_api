@@ -19,7 +19,7 @@ public class PedidoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Integer quantidade;
     @ManyToOne
     private Pedido pedido;
 

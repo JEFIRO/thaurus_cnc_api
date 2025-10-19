@@ -51,6 +51,7 @@ public class PedidoService {
 
             PedidoItem item = new PedidoItem(dto, produto);
             Variante variante = varianteRepository.findById(dto.variante()).orElseThrow(() -> new RuntimeException("Variante nao encontrada"));
+            item.setQuantidade(dto.quantidade());
             item.setPedido(pedidoEntity);
             item.setVariante(variante);
             itens.add(item);

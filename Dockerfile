@@ -13,9 +13,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Porta padrão do Spring Boot
-EXPOSE 8080
-ports:
-  - "9090:8080"
+EXPOSE 9090
 
 
 # Executa o app
