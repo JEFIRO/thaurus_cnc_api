@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
-
     @Autowired
     private PedidoRepository pedidoRepository;
     @Autowired
