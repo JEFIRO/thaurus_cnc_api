@@ -5,6 +5,7 @@ import com.jefiro.thaurus_cnc.dto.PedidoDTO;
 import com.jefiro.thaurus_cnc.dto.PedidoResponse;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.service.PedidoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping
-    public ResponseEntity<?> pedidoRepository(@RequestBody NewPedido pedido) {
+    public ResponseEntity<?> pedidoRepository(@RequestBody @Valid NewPedido pedido) {
         return ResponseEntity.ok().body(pedidoService.newPedido(pedido));
     }
 

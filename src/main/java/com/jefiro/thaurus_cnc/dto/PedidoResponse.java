@@ -11,8 +11,8 @@ public record PedidoResponse(
         ClienteDTO cliente,
         List<ItemResponse> itens,
         Double valor,
-        Double frete,
         StatusPedido status,
+        Frete frete,
         LocalDateTime data_pedido,
         LocalDateTime data_finalizacao,
         boolean ativo
@@ -23,8 +23,8 @@ public record PedidoResponse(
                 new ClienteDTO(pedido.getCliente()),
                 pedido.getItens().stream().map(ItemResponse::new).toList(),
                 pedido.getValor(),
-                pedido.getFrete(),
                 pedido.getStatus(),
+                pedido.getFrete(),
                 pedido.getData_pedido(),
                 pedido.getData_finalizacao(),
                 pedido.isAtivo()

@@ -18,7 +18,6 @@ public class Endereco {
     @Column(nullable = true)
     private String complemento;
     @Column(nullable = true)
-    @JsonProperty("unidade")
     private String numero;
     @Column(nullable = true)
     private String bairro;
@@ -29,6 +28,5 @@ public class Endereco {
     private String uf;
     @Column(nullable = true)
     private String ddd;
-    @Column(nullable = true)
     private boolean erro;
 }

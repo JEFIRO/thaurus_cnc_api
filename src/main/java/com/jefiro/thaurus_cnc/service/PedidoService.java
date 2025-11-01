@@ -3,6 +3,8 @@ package com.jefiro.thaurus_cnc.service;
 import com.jefiro.thaurus_cnc.dto.NewPedido;
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
 import com.jefiro.thaurus_cnc.dto.PedidoResponse;
+import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
+import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.*;
 import com.jefiro.thaurus_cnc.repository.PedidoRepository;
 import com.jefiro.thaurus_cnc.repository.VarianteRepository;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -25,14 +29,14 @@ public class PedidoService {
     ProdutoService produtoService;
 
     public PedidoResponse newPedido(NewPedido pedido) {
-        System.out.println(pedido);
         if (pedido.clienteDTO() == null || pedido.pedidoDTO() == null) {
-            throw new IllegalArgumentException();
+            throw new DadosInvalidosException();
         }
         Cliente cliente = null;
+
         try {
             cliente = clienteService.findByRemoteJid(pedido.clienteDTO().remoteJid());
-
+            cliente = clienteService.update(cliente.getId(), pedido.clienteDTO());
         } catch (Exception e) {
             cliente = clienteService.novo(pedido.clienteDTO());
         }
@@ -46,7 +50,6 @@ public class PedidoService {
         for (PedidoDTO dto : pedido.pedidoDTO()) {
             Produto produto = produtoService.get(dto.produto_id());
 
-
             PedidoItem item = new PedidoItem(dto, produto);
             Variante variante = varianteRepository.findById(dto.variante()).orElseThrow(() -> new RuntimeException("Variante nao encontrada"));
             item.setQuantidade(dto.quantidade());
@@ -56,10 +59,9 @@ public class PedidoService {
         }
 
         pedidoEntity.setItens(itens);
-        double total = itens.stream().mapToDouble(PedidoItem::getValor).sum();
-        pedidoEntity.setValor(total);
-
         pedidoEntity.setFrete(pedido.frete());
+        pedidoEntity.setValor(pedidoEntity.getItens().stream().mapToDouble(PedidoItem::getValor).sum());
+
         pedidoEntity = pedidoRepository.save(pedidoEntity);
 
         return new PedidoResponse(pedidoEntity);
@@ -67,7 +69,7 @@ public class PedidoService {
 
     public PedidoResponse newPedido(Long idCliente, List<PedidoDTO> pedidoDTOS) {
         if (idCliente == null || pedidoDTOS == null) {
-            throw new IllegalArgumentException("idCliente e pedido devem ser informados");
+            throw new DadosInvalidosException("idCliente e pedido devem ser informados");
         }
 
         Cliente cliente = clienteService.findById(idCliente);
@@ -87,10 +89,8 @@ public class PedidoService {
         });
         pedido.setItens(itens);
 
-        double total = itens.stream().mapToDouble(PedidoItem::getValor).sum();
-        pedido.setValor(total);
+        pedido.setValor(pedido.getItens().stream().mapToDouble(PedidoItem::getValor).sum());
 
-        pedido.setFrete(pedidoDTOS.get(0).frete());
         pedido = pedidoRepository.save(pedido);
         return new PedidoResponse(pedido);
     }
@@ -138,24 +138,51 @@ public class PedidoService {
             pedido.setCliente(dtoList.get(0).cliente());
         }
 
-        List<PedidoItem> itensAtualizados = dtoList.stream().map(dto -> {
+
+        Map<Long, PedidoItem> itensExistentes = pedido.getItens().stream()
+                .collect(Collectors.toMap(PedidoItem::getId, item -> item));
+
+        List<PedidoItem> novosItens = new ArrayList<>();
+
+        for (PedidoDTO dto : dtoList) {
+            PedidoItem item;
+
+
+            if (dto.id() != null && itensExistentes.containsKey(dto.id())) {
+                item = itensExistentes.get(dto.id());
+            } else {
+                item = new PedidoItem();
+                item.setPedido(pedido);
+            }
+
             Produto produto = produtoService.get(dto.produto_id());
-            PedidoItem item = new PedidoItem();
+            Variante variante = produto.getVariantes().stream().filter(v -> v.getId().equals(dto.variante()))
+                    .findFirst().orElseThrow(() -> new RecursoNaoEncontradoException("Variante nao encontrada"));
+
             item.setProduto(produto);
-            item.setValor(dto.valor());
             item.setPersonalizacao(dto.personalizacao());
-            item.setPedido(pedido);
-            return item;
-        }).toList();
+            item.setQuantidade(dto.quantidade());
+
+            double valorItem = variante.getValor() * item.getQuantidade();
+
+            item.setValor(valorItem);
+
+            novosItens.add(item);
+        }
+
 
         pedido.getItens().clear();
-        pedido.getItens().addAll(itensAtualizados);
+        pedido.getItens().addAll(novosItens);
 
+        double total = novosItens.stream()
+                .mapToDouble(PedidoItem::getValor)
+                .sum();
 
-        pedido.setValor(itensAtualizados.stream().mapToDouble(PedidoItem::getValor).sum());
+        pedido.setValor(total);
 
         return pedidoRepository.save(pedido);
     }
+
 
     public List<PedidoResponse> getPedidoCliente(Long id) {
         return pedidoRepository.findByClienteId(id).stream().map(PedidoResponse::new).toList();

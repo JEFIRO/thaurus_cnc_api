@@ -17,17 +17,15 @@ import java.util.Optional;
 
 @Service
 public class ClienteService {
+
     @Autowired
     private ClienteRepository repository;
+
     @Autowired
     private ViaCepService viaCepService;
 
     public Cliente findById(Long id) {
         return repository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
-    }
-
-    public Page<Cliente> findAll(Pageable pageable) {
-        return repository.findAllByAtivoTrue(pageable);
     }
 
     public Page<Cliente> findByNome(String nome, Integer page, Integer size, String sortBy, String direction) {
@@ -66,7 +64,6 @@ public class ClienteService {
         return repository.findByCpfAndAtivoTrue(cpf, pageable);
     }
 
-
     public Cliente novo(ClienteDTO clienteDTO) {
         if (clienteDTO == null) {
             throw new DadosInvalidosException("Cliente não pode ser nulo");
@@ -75,12 +72,11 @@ public class ClienteService {
         Cliente cliente = new Cliente(clienteDTO);
 
         if (clienteDTO.endereco().getCep() != null) {
-            cliente.setEndereco(getEndereco(cliente, clienteDTO));
+            cliente.setEndereco(getEndereco(clienteDTO));
         }
 
         return repository.save(cliente);
     }
-
 
     public Cliente update(Long id, ClienteDTO cliente) {
         if (cliente == null) {
@@ -89,7 +85,7 @@ public class ClienteService {
         if (id == null) {
             throw new DadosInvalidosException("Id nao pode ser nulo");
         }
-        Cliente clienteEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente nao encontrado"));
+        Cliente clienteEntity = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
 
         if (cliente.nome() != null) {
             clienteEntity.setNome(cliente.nome());
@@ -106,8 +102,8 @@ public class ClienteService {
         if (cliente.email() != null) {
             clienteEntity.setEmail(cliente.email());
         }
-        if (cliente.endereco().getCep() != null) {
-            clienteEntity.setEndereco(getEndereco(clienteEntity, cliente));
+        if (cliente.endereco() != null) {
+            clienteEntity.setEndereco(getEndereco(cliente));
         }
 
         return repository.save(clienteEntity);
@@ -136,18 +132,7 @@ public class ClienteService {
         return repository.findByRemoteJidAndAtivoTrue(rij).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
     }
 
-    public Cliente findByRemote(String rij) {
-        if (rij == null) {
-            throw new DadosInvalidosException("RemoteJid nao pode ser nulo");
-        }
-        Optional<Cliente> cliente = repository.findByRemoteJidAndAtivoTrue(rij);
-        if (cliente.isPresent()) {
-            return cliente.get();
-        } else return new Cliente();
-
-    }
-
-    private Endereco getEndereco(Cliente cliente, ClienteDTO dto) {
+    private Endereco getEndereco(ClienteDTO dto) {
         if (dto.endereco().getCep() != null) {
             String cep = dto.endereco().getCep().replace("-", "").trim();
 

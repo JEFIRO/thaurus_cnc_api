@@ -20,6 +20,6 @@ public class InfinitypayDTO {
     public InfinitypayDTO(PedidoResponse pedido) {
         this.order_nsu = pedido.id().toString();
         pedido.itens().forEach(i -> items.add(new InfinitypayItens(1, i.valor(), i.nome_produto())));
-        items.add(new InfinitypayItens(1, pedido.frete(), "Frete"));
+        items.add(new InfinitypayItens(1, pedido.frete().valor_frete(), pedido.frete().metodo()));
     }
 }

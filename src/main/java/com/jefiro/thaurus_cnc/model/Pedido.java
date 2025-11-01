@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.model;
 
+import com.jefiro.thaurus_cnc.dto.Frete;
 import com.jefiro.thaurus_cnc.dto.PedidoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 
-
 @Table
 @Entity
 public class Pedido {
@@ -26,9 +26,10 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoItem> itens;
     private Double valor;
-    private Double frete;
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
+    @Embedded
+    private Frete frete;
     private LocalDateTime data_pedido;
     private LocalDateTime data_finalizacao;
     private boolean ativo;
@@ -48,5 +49,4 @@ public class Pedido {
         this.data_finalizacao = LocalDateTime.now();
         this.ativo = true;
     }
-
 }

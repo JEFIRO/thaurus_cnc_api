@@ -1,10 +1,10 @@
 package com.jefiro.thaurus_cnc.service;
 
 import com.jefiro.thaurus_cnc.dto.CalculaFrete;
-import com.jefiro.thaurus_cnc.dto.ProdutoDTO;
+import com.jefiro.thaurus_cnc.dto.melhorenvio.MelhorEnvioToken;
 import com.jefiro.thaurus_cnc.dto.melhorenvio.MelhorEnvioTokenDTO;
 import com.jefiro.thaurus_cnc.dto.melhorenvio.MelhorEnvioTokenResponse;
-import com.jefiro.thaurus_cnc.dto.melhorenvio.MelhorEnvioToken;
+import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.Produto;
 import com.jefiro.thaurus_cnc.model.Variante;
 import com.jefiro.thaurus_cnc.repository.TokenRepository;
@@ -135,8 +135,7 @@ public class MelhorEnvioService {
             productList.add(product);
         });
         requestBody.put("products", productList);
-
-
+        
         requestBody.put("options", Map.of("receipt", false, "own_hand", false));
         requestBody.put("services", "1,2,18");
 
@@ -181,7 +180,7 @@ public class MelhorEnvioService {
             Produto p = produtoService.get(produto.id_Produto());
             Variante variante = p.getVariantes().stream()
                     .filter(pr -> Objects.equals(pr.getId(), produto.id_variante()))
-                    .findFirst().orElseThrow(() -> new RuntimeException("Variante não encontarada"));
+                    .findFirst().orElseThrow(() -> new RecursoNaoEncontradoException("Variante não encontarada"));
 
             Map<String, Object> product = new HashMap<>();
             product.put("id", p.getId());
