@@ -18,6 +18,8 @@ import java.util.List;
 public class InfinitpayService {
     @Autowired
     private PedidoService pedidoService;
+    @Autowired
+    private InfinitypayConfig infinitypayConfig;
 
     private final WebClient webClient;
 
@@ -31,17 +33,27 @@ public class InfinitpayService {
         if (pedido.status().equals(StatusPedido.LAYOUT_PENDING)){
             throw new StatusInvalidoException("Seu Layout ainda não foi aprovado.");
         }
-        List<InfinitypayItens> itens = pedido.itens().stream()
-                .map(item -> new InfinitypayItens(
-                        item.quantidade(),
-                        item.variante().getValor(),
-                        item.nome_Produto()
-                ))
-                .toList();
-        itens.add(new InfinitypayItens(1, pedido.frete().valor_frete(), "Frete:"+pedido.frete().metodo()));
+        List<InfinitypayItens> items = new ArrayList<>(
+                pedido.itens().stream()
+                        .map(item -> new InfinitypayItens(
+                                item.quantidade(),
+                                item.variante().getValor(),
+                                item.nome_Produto()
+                        ))
+                        .toList()
+        );
 
-        InfinitypayDTO infinitypayDTO = new InfinitypayDTO(itens,pedido.id_Pedido());
+        items.add(new InfinitypayItens(1, pedido.frete().valor_frete(), "Frete: " + pedido.frete().metodo()));
 
+        InfinitypayDTO infinitypayDTO = new InfinitypayDTO(
+                items,
+                pedido.id_Pedido(),
+                infinitypayConfig.getHandle(),
+                infinitypayConfig.getRedirectUrl(),
+                infinitypayConfig.getWebhookUrl()
+        );
+
+        System.out.println(infinitypayDTO);
         return webClient.post()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(infinitypayDTO)

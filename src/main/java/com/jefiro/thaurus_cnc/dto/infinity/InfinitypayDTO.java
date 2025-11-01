@@ -1,23 +1,22 @@
 package com.jefiro.thaurus_cnc.dto.infinity;
 
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public class InfinitypayDTO {
-    @Value("${infinityPay.handle}")
     private String handle;
-    @Value("${infinityPay.redirect.url}")
     private String redirect_url;
-    @Value("${infinityPay.webhook.url}")
     private String webhook_url;
-
     private String order_nsu;
-    private List<InfinitypayItens> itens;
+    private List<InfinitypayItens> items;
 
-    public InfinitypayDTO(List<InfinitypayItens> itens, String order) {
-        this.itens = itens;
-        this.order_nsu = order;
+    public InfinitypayDTO(List<InfinitypayItens> itens, String order_nsu, String handle, String redirect_url, String webhook_url) {
+        this.items = itens;
+        this.order_nsu = order_nsu;
+        this.handle = handle;
+        this.redirect_url = redirect_url;
+        this.webhook_url = webhook_url;
     }
 }
