@@ -1,9 +1,8 @@
 package com.jefiro.thaurus_cnc.controller;
 
 import com.jefiro.thaurus_cnc.dto.NewPedido;
-import com.jefiro.thaurus_cnc.dto.PedidoDTO;
-import com.jefiro.thaurus_cnc.dto.PedidoResponse;
-import com.jefiro.thaurus_cnc.model.Pedido;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

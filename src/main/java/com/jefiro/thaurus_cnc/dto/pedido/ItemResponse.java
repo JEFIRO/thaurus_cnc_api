@@ -1,7 +1,6 @@
-package com.jefiro.thaurus_cnc.dto;
+package com.jefiro.thaurus_cnc.dto.pedido;
 
 import com.jefiro.thaurus_cnc.model.PedidoItem;
-import com.jefiro.thaurus_cnc.model.Produto;
 import com.jefiro.thaurus_cnc.model.Variante;
 
 import java.util.Map;
@@ -16,7 +15,7 @@ public record ItemResponse(
         Integer quantidade) {
     public ItemResponse(PedidoItem item) {
         this(
-                item.getId(),
+                item.getId_item(),
                 item.getProduto().getNome(),
                 item.getProduto().getId().toString(),
                 item.getVariante(),

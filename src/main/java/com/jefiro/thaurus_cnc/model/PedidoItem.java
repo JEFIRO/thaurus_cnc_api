@@ -1,6 +1,6 @@
 package com.jefiro.thaurus_cnc.model;
 
-import com.jefiro.thaurus_cnc.dto.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class PedidoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_item;
     @ManyToOne
     private Produto produto;
     @ManyToOne

@@ -1,7 +1,7 @@
 package com.jefiro.thaurus_cnc.service;
 
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayDTO;
-import com.jefiro.thaurus_cnc.dto.PedidoResponse;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
 import org.springframework.beans.factory.annotation.Autowired;

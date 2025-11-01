@@ -1,7 +1,7 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.Frete;
-import com.jefiro.thaurus_cnc.dto.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,14 +20,20 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String id_Pedido;
+
     @ManyToOne
     private Cliente cliente;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoItem> itens;
-    private Double valor;
+
+    private Double valor_total;
+
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
+
     @Embedded
     private Frete frete;
     private LocalDateTime data_pedido;

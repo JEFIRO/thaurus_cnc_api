@@ -1,7 +1,8 @@
 package com.jefiro.thaurus_cnc.controller;
 
-import com.jefiro.thaurus_cnc.dto.cliente.ClienteDTO;
-import com.jefiro.thaurus_cnc.model.Cliente;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteResponse;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
+import com.jefiro.thaurus_cnc.dto.cliente.NewCliente;
 import com.jefiro.thaurus_cnc.service.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<?> novo(@RequestBody @Valid ClienteDTO cliente) {
+    public ResponseEntity<?> novo(@RequestBody @Valid NewCliente cliente) {
         return ResponseEntity.ok().body(clienteService.novo(cliente));
     }
 
@@ -32,7 +33,7 @@ public class ClienteController {
     }
 
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Page<Cliente>> findByCpf(
+    public ResponseEntity<Page<ClienteResponse>> findByCpf(
             @PathVariable String cpf,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -43,7 +44,7 @@ public class ClienteController {
     }
 
     @GetMapping("/telefone/{telefone}")
-    public ResponseEntity<Page<Cliente>> findByTelefone(
+    public ResponseEntity<Page<ClienteResponse>> findByTelefone(
             @PathVariable String telefone,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -54,7 +55,7 @@ public class ClienteController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Page<Cliente>> findByNome(
+    public ResponseEntity<Page<ClienteResponse>> findByNome(
             @PathVariable String nome,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -65,7 +66,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Cliente>> findAll(
+    public ResponseEntity<Page<ClienteResponse>> findAll(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -75,7 +76,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ClienteDTO cliente) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ClienteUpdate cliente) {
         return ResponseEntity.ok(clienteService.update(id, cliente));
     }
 

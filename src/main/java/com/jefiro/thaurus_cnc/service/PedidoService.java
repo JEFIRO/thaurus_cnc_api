@@ -1,8 +1,8 @@
 package com.jefiro.thaurus_cnc.service;
 
 import com.jefiro.thaurus_cnc.dto.NewPedido;
-import com.jefiro.thaurus_cnc.dto.PedidoDTO;
-import com.jefiro.thaurus_cnc.dto.PedidoResponse;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.*;

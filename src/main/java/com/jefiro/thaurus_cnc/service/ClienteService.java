@@ -1,9 +1,8 @@
 package com.jefiro.thaurus_cnc.service;
 
-import com.jefiro.thaurus_cnc.dto.cliente.ClienteDTO;
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteResponse;
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
-import com.jefiro.thaurus_cnc.dto.cliente.NewClienteDTO;
+import com.jefiro.thaurus_cnc.dto.cliente.NewCliente;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.Cliente;
@@ -66,7 +65,7 @@ public class ClienteService {
         return repository.findByCpfAndAtivoTrue(cpf, pageable);
     }
 
-    public ClienteResponse novo(NewClienteDTO clienteDTO) {
+    public ClienteResponse novo(NewCliente clienteDTO) {
         if (clienteDTO == null) {
             throw new DadosInvalidosException("Cliente não pode ser nulo");
         }
@@ -134,7 +133,7 @@ public class ClienteService {
         return repository.findByRemoteJidAndAtivoTrue(rij).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
     }
 
-    private Endereco getEndereco(NewClienteDTO dto) {
+    private Endereco getEndereco(NewCliente dto) {
         if (dto.endereco().getCep() != null) {
             String cep = dto.endereco().getCep().replace("-", "").trim();
 

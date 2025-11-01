@@ -1,9 +1,8 @@
 package com.jefiro.thaurus_cnc.dto.infinity;
 
-import com.jefiro.thaurus_cnc.dto.PedidoResponse;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InfinitypayDTO {
