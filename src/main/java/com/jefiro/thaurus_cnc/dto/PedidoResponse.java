@@ -1,7 +1,7 @@
 package com.jefiro.thaurus_cnc.dto;
 
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteDTO;
 import com.jefiro.thaurus_cnc.model.Pedido;
-import com.jefiro.thaurus_cnc.model.PedidoItem;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
 
 import java.time.LocalDateTime;

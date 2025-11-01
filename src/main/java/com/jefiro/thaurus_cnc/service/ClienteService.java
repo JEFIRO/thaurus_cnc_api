@@ -1,6 +1,9 @@
 package com.jefiro.thaurus_cnc.service;
 
-import com.jefiro.thaurus_cnc.dto.ClienteDTO;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteDTO;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteResponse;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
+import com.jefiro.thaurus_cnc.dto.cliente.NewClienteDTO;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.Cliente;
@@ -13,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class ClienteService {
 
@@ -24,11 +25,12 @@ public class ClienteService {
     @Autowired
     private ViaCepService viaCepService;
 
-    public Cliente findById(Long id) {
-        return repository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
+    public ClienteResponse findById(Long id) {
+        Cliente cliente = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
+        return new ClienteResponse(cliente);
     }
 
-    public Page<Cliente> findByNome(String nome, Integer page, Integer size, String sortBy, String direction) {
+    public Page<ClienteResponse> findByNome(String nome, Integer page, Integer size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -37,7 +39,7 @@ public class ClienteService {
         return repository.findByNomeContainingIgnoreCaseAndAtivoTrue(nome, pageable);
     }
 
-    public Page<Cliente> findAll(Integer page, Integer size, String sortBy, String direction) {
+    public Page<ClienteResponse> findAll(Integer page, Integer size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -46,7 +48,7 @@ public class ClienteService {
         return repository.findAllByAtivoTrue(pageable);
     }
 
-    public Page<Cliente> findByTelefone(String telefone, int page, int size, String sortBy, String direction) {
+    public Page<ClienteResponse> findByTelefone(String telefone, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -55,7 +57,7 @@ public class ClienteService {
         return repository.findByTelefoneAndAtivoTrue(telefone, pageable);
     }
 
-    public Page<Cliente> findByCpf(String cpf, int page, int size, String sortBy, String direction) {
+    public Page<ClienteResponse> findByCpf(String cpf, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -64,7 +66,7 @@ public class ClienteService {
         return repository.findByCpfAndAtivoTrue(cpf, pageable);
     }
 
-    public Cliente novo(ClienteDTO clienteDTO) {
+    public ClienteResponse novo(NewClienteDTO clienteDTO) {
         if (clienteDTO == null) {
             throw new DadosInvalidosException("Cliente não pode ser nulo");
         }
@@ -75,10 +77,10 @@ public class ClienteService {
             cliente.setEndereco(getEndereco(clienteDTO));
         }
 
-        return repository.save(cliente);
+        return new ClienteResponse(repository.save(cliente));
     }
 
-    public Cliente update(Long id, ClienteDTO cliente) {
+    public ClienteResponse update(Long id, ClienteUpdate cliente) {
         if (cliente == null) {
             throw new DadosInvalidosException("Cliente nao pode ser nulo");
         }
@@ -106,7 +108,7 @@ public class ClienteService {
             clienteEntity.setEndereco(getEndereco(cliente));
         }
 
-        return repository.save(clienteEntity);
+        return new ClienteResponse(repository.save(clienteEntity));
     }
 
     public boolean delete(Long id) {
@@ -132,7 +134,25 @@ public class ClienteService {
         return repository.findByRemoteJidAndAtivoTrue(rij).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
     }
 
-    private Endereco getEndereco(ClienteDTO dto) {
+    private Endereco getEndereco(NewClienteDTO dto) {
+        if (dto.endereco().getCep() != null) {
+            String cep = dto.endereco().getCep().replace("-", "").trim();
+
+            Endereco endereco = viaCepService.gerarEndereco(cep);
+
+            if (endereco == null || endereco.isErro()) {
+                throw new DadosInvalidosException("CEP inválido: " + cep);
+            }
+
+            endereco.setNumero(dto.endereco().getNumero());
+            endereco.setComplemento(dto.endereco().getComplemento());
+
+            return endereco;
+        }
+        return null;
+    }
+
+    private Endereco getEndereco(ClienteUpdate dto) {
         if (dto.endereco().getCep() != null) {
             String cep = dto.endereco().getCep().replace("-", "").trim();
 

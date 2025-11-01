@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.dto;
+package com.jefiro.thaurus_cnc.dto.cliente;
 
 import com.jefiro.thaurus_cnc.model.Cliente;
 import com.jefiro.thaurus_cnc.model.Endereco;

@@ -1,6 +1,6 @@
 package com.jefiro.thaurus_cnc.controller;
 
-import com.jefiro.thaurus_cnc.dto.ClienteDTO;
+import com.jefiro.thaurus_cnc.dto.cliente.ClienteDTO;
 import com.jefiro.thaurus_cnc.model.Cliente;
 import com.jefiro.thaurus_cnc.service.ClienteService;
 import jakarta.validation.Valid;
