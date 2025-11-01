@@ -7,4 +7,5 @@ public class Medida {
     private Integer altura;
     private Integer largura;
     private Integer profundidade;
+    private Double peso;
  }

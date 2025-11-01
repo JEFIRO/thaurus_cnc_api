@@ -6,6 +6,7 @@ import com.jefiro.thaurus_cnc.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +15,10 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository repository;
 
+
     public Produto novo(ProdutoDTO dto) {
-        return repository.save(new Produto(dto));
+        Produto produto = new Produto(dto);
+        return repository.save(produto);
     }
 
     public List<Produto> novo(List<ProdutoDTO> dtoList) {

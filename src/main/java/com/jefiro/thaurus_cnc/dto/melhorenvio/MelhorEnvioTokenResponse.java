@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.dto;
+package com.jefiro.thaurus_cnc.dto.melhorenvio;
 
 // Crie este record para receber a resposta
 public record MelhorEnvioTokenResponse(

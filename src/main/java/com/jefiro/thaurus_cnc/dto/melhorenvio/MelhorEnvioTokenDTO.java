@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.dto;
+package com.jefiro.thaurus_cnc.dto.melhorenvio;
 
 public record MelhorEnvioTokenDTO(
         String grant_type,

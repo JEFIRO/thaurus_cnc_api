@@ -28,13 +28,10 @@ public class PedidoController {
             @PathVariable Long id_cliente,
             @RequestBody List<PedidoDTO> pedidosDTO) {
 
-        // Chama o serviço que cria o pedido
         PedidoResponse pedidoCriado = pedidoService.newPedido(id_cliente, pedidosDTO);
 
-        // Retorna 201 CREATED com o pedido criado
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCriado);
     }
-
 
     @GetMapping()
     public ResponseEntity<?> listar() {
@@ -60,5 +57,11 @@ public class PedidoController {
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody List<PedidoDTO> dto) {
         return ResponseEntity.ok().body(pedidoService.update(id, dto));
     }
+
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<?> findByPedidoCliente(@PathVariable Long id) {
+        return ResponseEntity.ok().body(pedidoService.getPedidoCliente(id));
+    }
+
 
 }

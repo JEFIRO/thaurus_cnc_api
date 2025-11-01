@@ -8,7 +8,8 @@ import java.util.Map;
 
 public record ItemResponse(
         Long id,
-        Produto produto,
+        String nome_produto,
+        String id_produto,
         Variante variante,
         Map<String, Object> personalizacao,
         Double valor,
@@ -16,7 +17,8 @@ public record ItemResponse(
     public ItemResponse(PedidoItem item) {
         this(
                 item.getId(),
-                item.getProduto(),
+                item.getProduto().getNome(),
+                item.getProduto().getId().toString(),
                 item.getVariante(),
                 item.getPersonalizacao(),
                 item.getValor(),

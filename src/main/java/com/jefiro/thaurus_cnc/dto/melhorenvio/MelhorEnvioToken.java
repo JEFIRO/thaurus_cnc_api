@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.model; // Ou onde ficam seus modelos/entidades
+package com.jefiro.thaurus_cnc.dto.melhorenvio; // Ou onde ficam seus modelos/entidades
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,15 +15,16 @@ import java.time.Instant;
 @NoArgsConstructor
 
 @Entity
+@Table(name = "melhorenvio_token")
 public class MelhorEnvioToken {
 
     @Id
     private Long id;
 
-    @Column(name = "access_token", length = 2048)
+    @Column(name = "access_token", length = 4096)
     private String accessToken;
 
-    @Column(name = "refresh_token", length = 1024)
+    @Column(name = "refresh_token", length = 4096)
     private String refreshToken;
 
     @Column(name = "expires_at")

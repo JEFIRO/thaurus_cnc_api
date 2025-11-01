@@ -19,6 +19,7 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String remoteJid;
     private String nome;
     private String telefone;
     private String email;
@@ -30,6 +31,7 @@ public class Cliente {
     private boolean ativo;
 
     public Cliente(ClienteDTO dto) {
+        this.remoteJid = dto.remoteJid();
         this.nome = dto.nome();
         this.telefone = dto.telefone();
         this.email = dto.email();

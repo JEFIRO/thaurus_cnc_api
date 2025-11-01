@@ -30,14 +30,12 @@ public class PedidoService {
             throw new IllegalArgumentException();
         }
         Cliente cliente = null;
-        cliente = clienteService.findByTelefone(pedido.clienteDTO().telefone());
+        try {
+            cliente = clienteService.findByRemoteJid(pedido.clienteDTO().remoteJid());
 
-
-        if (cliente == null) {
+        } catch (Exception e) {
             cliente = clienteService.novo(pedido.clienteDTO());
         }
-
-        cliente.setEndereco(pedido.clienteDTO().endereco());
 
         Pedido pedidoEntity = new Pedido();
         pedidoEntity.setCliente(cliente);
@@ -114,6 +112,7 @@ public class PedidoService {
     public Boolean delete(Long id) {
         try {
             Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
+            pedido.setStatus(StatusPedido.CANCLED);
             pedido.setAtivo(false);
             pedidoRepository.save(pedido);
             return true;
@@ -135,12 +134,10 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        // Atualiza cliente se necessário
         if (!dtoList.isEmpty() && dtoList.get(0).cliente() != null) {
             pedido.setCliente(dtoList.get(0).cliente());
         }
 
-        // Atualiza os itens
         List<PedidoItem> itensAtualizados = dtoList.stream().map(dto -> {
             Produto produto = produtoService.get(dto.produto_id());
             PedidoItem item = new PedidoItem();
@@ -160,4 +157,7 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
+    public List<PedidoResponse> getPedidoCliente(Long id) {
+        return pedidoRepository.findByClienteId(id).stream().map(PedidoResponse::new).toList();
+    }
 }

@@ -33,13 +33,6 @@ public class PedidoItem {
     private Map<String, Object> personalizacao;
 
     private Double valor;
-    private Double frete;
-
-    public PedidoItem(PedidoItemDTO dto) {
-        this.personalizacao = dto.personalizacao();
-        this.valor = dto.valor();
-        this.frete = dto.frete();
-    }
 
     public PedidoItem(PedidoDTO dto, Produto produto) {
         this.personalizacao = dto.personalizacao();

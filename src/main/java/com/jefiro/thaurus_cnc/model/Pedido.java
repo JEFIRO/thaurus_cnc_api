@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @Data
@@ -19,6 +20,7 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String id_Pedido;
     @ManyToOne
     private Cliente cliente;
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -32,6 +34,7 @@ public class Pedido {
     private boolean ativo;
 
     public Pedido() {
+        this.id_Pedido = UUID.randomUUID().toString();
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();
         this.data_finalizacao = LocalDateTime.now();
@@ -39,6 +42,7 @@ public class Pedido {
     }
 
     public Pedido(PedidoDTO dto) {
+        this.id_Pedido = UUID.randomUUID().toString();
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();
         this.data_finalizacao = LocalDateTime.now();

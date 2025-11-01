@@ -22,7 +22,8 @@ public class Variante {
     @AttributeOverrides({
             @AttributeOverride(name = "altura", column = @Column(name = "altura_produto")),
             @AttributeOverride(name = "largura", column = @Column(name = "largura_produto")),
-            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_produto"))
+            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_produto")),
+            @AttributeOverride(name = "peso", column = @Column(name = "peso_produto"))
     })
     private Medida medida_produto;
 
@@ -30,7 +31,8 @@ public class Variante {
     @AttributeOverrides({
             @AttributeOverride(name = "altura", column = @Column(name = "altura_embalagem")),
             @AttributeOverride(name = "largura", column = @Column(name = "largura_embalagem")),
-            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_embalagem"))
+            @AttributeOverride(name = "profundidade", column = @Column(name = "profundidade_embalagem")),
+            @AttributeOverride(name = "peso", column = @Column(name = "peso_embalagem"))
     })
     private Medida medida_embalagem;
 

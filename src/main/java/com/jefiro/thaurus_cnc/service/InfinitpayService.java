@@ -1,8 +1,8 @@
 package com.jefiro.thaurus_cnc.service;
 
-import com.jefiro.thaurus_cnc.dto.InfinitypayDTO;
+import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayDTO;
 import com.jefiro.thaurus_cnc.dto.PedidoResponse;
-import com.jefiro.thaurus_cnc.model.Pedido;
+import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,12 +25,11 @@ public class InfinitpayService {
         PedidoResponse pedido = pedidoService.get(pedidoId);
 
         if (pedido.status().equals(StatusPedido.LAYOUT_PENDING)){
-            throw new IllegalArgumentException("Seu Layout ainda não foi aprovado.");
+            throw new StatusInvalidoException("Seu Layout ainda não foi aprovado.");
         }
 
         InfinitypayDTO infinitypayDTO = new InfinitypayDTO(pedido);
 
-        System.out.println(infinitypayDTO);
         return webClient.post()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(infinitypayDTO)

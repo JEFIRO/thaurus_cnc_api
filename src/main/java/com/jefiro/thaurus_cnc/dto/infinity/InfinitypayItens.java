@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.dto;
+package com.jefiro.thaurus_cnc.dto.infinity;
 
 public record InfinitypayItens(
         Integer quantity,

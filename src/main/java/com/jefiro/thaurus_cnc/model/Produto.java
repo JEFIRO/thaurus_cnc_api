@@ -25,7 +25,7 @@ public class Produto {
     private String imagem;
     private Boolean ativo;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "produto_id")
     private List<Variante> variantes;
 
