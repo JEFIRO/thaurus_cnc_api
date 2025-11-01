@@ -26,5 +26,6 @@ public record ClienteResponse(
                 cliente.getEndereco(),
                 cliente.getData_cadastro(),
                 cliente.isAtivo());
+
     }
 }

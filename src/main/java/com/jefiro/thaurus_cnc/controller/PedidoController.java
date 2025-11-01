@@ -1,8 +1,9 @@
 package com.jefiro.thaurus_cnc.controller;
 
-import com.jefiro.thaurus_cnc.dto.NewPedido;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoItemDTO;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ public class PedidoController {
     public ResponseEntity<?> pedidoRepository(@RequestBody @Valid NewPedido pedido) {
         return ResponseEntity.ok().body(pedidoService.newPedido(pedido));
     }
-
-    @PostMapping("/{id_cliente}")
-    public ResponseEntity<PedidoResponse> criarPedido(
-            @PathVariable Long id_cliente,
-            @RequestBody List<PedidoDTO> pedidosDTO) {
-
-        PedidoResponse pedidoCriado = pedidoService.newPedido(id_cliente, pedidosDTO);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCriado);
-    }
+//
+//    @PostMapping("/{id_cliente}")
+//    public ResponseEntity<PedidoResponse> criarPedido(
+//            @PathVariable Long id_cliente,
+//            @RequestBody List<PedidoDTO> pedidosDTO) {
+//
+//        PedidoResponse pedidoCriado = pedidoService.newPedido(id_cliente, pedidosDTO);
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCriado);
+//    }
 
     @GetMapping()
     public ResponseEntity<?> listar() {
@@ -54,9 +55,10 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody List<PedidoDTO> dto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PedidoUpdateDTO dto) {
         return ResponseEntity.ok().body(pedidoService.update(id, dto));
     }
+
 
     @GetMapping("/cliente/{id}")
     public ResponseEntity<?> findByPedidoCliente(@PathVariable Long id) {

@@ -12,4 +12,7 @@ public record ClienteUpdate(
         String email,
         String cpf,
         Endereco endereco) {
+    public ClienteUpdate( NewCliente cliente) {
+      this(cliente.remoteJid(), cliente.nome(), cliente.telefone(), cliente.email(), cliente.cpf(), cliente.endereco());
+    }
 }

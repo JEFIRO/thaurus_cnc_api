@@ -1,6 +1,6 @@
 package com.jefiro.thaurus_cnc.model;
 
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,16 +20,18 @@ public class PedidoItem {
     @ManyToOne
     private Produto produto;
     @ManyToOne
+    private Pedido pedido;
+    @ManyToOne
     private Variante variante;
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, Object> personalizacao;
     private Integer quantidade;
     private Double valor;
 
-    public PedidoItem(PedidoDTO dto, Produto produto,Variante variante) {
-        this.personalizacao = dto.personalizacao();
-        this.valor = produto.getVariantes().stream().filter(p -> p.getId().equals(dto.variante())).findFirst().orElseThrow().getValor() * dto.quantidade();
-        this.quantidade = dto.quantidade();
+    public PedidoItem(Produto produto, Variante variante, Map<String, Object> personalizacao, Integer quantidade) {
+        this.personalizacao = personalizacao;
+        this.quantidade = quantidade;
+        this.valor = variante.getValor() * quantidade;
         this.produto = produto;
         this.variante = variante;
     }

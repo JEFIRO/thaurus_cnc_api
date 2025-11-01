@@ -1,7 +1,6 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.Frete;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,14 +40,6 @@ public class Pedido {
     private boolean ativo;
 
     public Pedido() {
-        this.id_Pedido = UUID.randomUUID().toString();
-        this.status = StatusPedido.LAYOUT_PENDING;
-        this.data_pedido = LocalDateTime.now();
-        this.data_finalizacao = LocalDateTime.now();
-        this.ativo = true;
-    }
-
-    public Pedido(PedidoDTO dto) {
         this.id_Pedido = UUID.randomUUID().toString();
         this.status = StatusPedido.LAYOUT_PENDING;
         this.data_pedido = LocalDateTime.now();

@@ -168,5 +168,34 @@ public class ClienteService {
         }
         return null;
     }
+    public Cliente updateInterno(Long id, ClienteUpdate cliente) {
+        if (cliente == null) {
+            throw new DadosInvalidosException("Cliente nao pode ser nulo");
+        }
+        if (id == null) {
+            throw new DadosInvalidosException("Id nao pode ser nulo");
+        }
+        Cliente clienteEntity = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
 
+        if (cliente.nome() != null) {
+            clienteEntity.setNome(cliente.nome());
+        }
+        if (cliente.telefone() != null) {
+            clienteEntity.setTelefone(cliente.telefone());
+        }
+        if (cliente.remoteJid() != null) {
+            clienteEntity.setRemoteJid(cliente.remoteJid());
+        }
+        if (cliente.cpf() != null) {
+            clienteEntity.setCpf(cliente.cpf());
+        }
+        if (cliente.email() != null) {
+            clienteEntity.setEmail(cliente.email());
+        }
+        if (cliente.endereco() != null) {
+            clienteEntity.setEndereco(getEndereco(cliente));
+        }
+
+        return repository.save(clienteEntity);
+    }
 }

@@ -120,12 +120,12 @@ public class MelhorEnvioService {
         Map<String, Object> requestBody = new HashMap<>();
 
         requestBody.put("from", Map.of("postal_code", "96020360"));
-        requestBody.put("to", Map.of("postal_code", pedido.cliente().endereco().getCep()));
+        requestBody.put("to", Map.of("postal_code", pedido.cliente().getEndereco().getCep()));
 
         List<Map<String, Object>> productList = new ArrayList<>();
         pedido.itens().forEach(item -> {
             Map<String, Object> product = new HashMap<>();
-            product.put("id", item.id());
+            product.put("id", item.id_produto());
             product.put("width", item.variante().getMedida_embalagem().getLargura());
             product.put("height", item.variante().getMedida_embalagem().getAltura());
             product.put("length", item.variante().getMedida_embalagem().getProfundidade());

@@ -14,11 +14,10 @@ public class InfinitypayDTO {
     private String webhook_url;
 
     private String order_nsu;
-    private List<InfinitypayItens> items;
+    private List<InfinitypayItens> itens;
 
-    public InfinitypayDTO(PedidoResponse pedido) {
-        this.order_nsu = pedido.id().toString();
-        pedido.itens().forEach(i -> items.add(new InfinitypayItens(1, i.valor(), i.nome_produto())));
-        items.add(new InfinitypayItens(1, pedido.frete().valor_frete(), pedido.frete().metodo()));
+    public InfinitypayDTO(List<InfinitypayItens> itens, String order) {
+        this.itens = itens;
+        this.order_nsu = order;
     }
 }
