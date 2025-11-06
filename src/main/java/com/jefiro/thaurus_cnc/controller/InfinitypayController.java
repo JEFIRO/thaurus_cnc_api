@@ -1,6 +1,6 @@
 package com.jefiro.thaurus_cnc.controller;
 
-import com.jefiro.thaurus_cnc.service.InfinitpayService;
+import com.jefiro.thaurus_cnc.service.infinitepay.InfinitpayService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,10 @@ public class InfinitypayController {
     private InfinitpayService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> enviarDados(@PathVariable @Valid @NotNull Long id) {
-        return ResponseEntity.ok(service.gerarLink(id));
+    public ResponseEntity<?> enviarDados(@PathVariable @Valid @NotNull Long id,Double valorAdicinal) {
+        return ResponseEntity.ok(service.gerarLink(id,valorAdicinal));
     }
+
+
 
 }

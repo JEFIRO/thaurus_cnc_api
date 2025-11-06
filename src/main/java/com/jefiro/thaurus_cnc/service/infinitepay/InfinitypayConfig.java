@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.service;
+package com.jefiro.thaurus_cnc.service.infinitepay;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

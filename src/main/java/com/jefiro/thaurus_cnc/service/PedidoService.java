@@ -71,6 +71,9 @@ public class PedidoService {
 
         return new PedidoResponse(pedidoEntity);
     }
+    public Pedido upSimples(Pedido pedido){
+        return pedidoRepository.save(pedido);
+    }
 
     /*public PedidoResponse newPedido(Long idCliente, List<NewPedido> pedido) {
         if (idCliente == null || pedido == null) {
@@ -109,10 +112,10 @@ public class PedidoService {
         return pedidoRepository.findAllAtivos().stream().map(PedidoResponse::new).toList();
     }
 
-    public PedidoResponse get(Long id) {
+    public Pedido get(Long id) {
         Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
         if (pedido != null) {
-            return new PedidoResponse(pedido);
+            return pedido;
         } else {
             throw new RuntimeException("Pedido nao encontrado");
         }

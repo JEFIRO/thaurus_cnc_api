@@ -13,12 +13,17 @@ public record PedidoResponse(
         String id_Pedido,
         Cliente cliente,
         List<PedidoItemResponse> itens,
+        Double valor_customizacao,
         Double valor_total,
         StatusPedido status,
         Frete frete,
         LocalDateTime data_pedido) {
     public PedidoResponse(Pedido pedido) {
-        this(pedido.getId(), pedido.getId_Pedido(), pedido.getCliente(), pedido.getItens().stream().map(PedidoItemResponse::new).toList(), pedido.getValor_total(), pedido.getStatus(), pedido.getFrete(), pedido.getData_pedido());
-
+        this(pedido.getId(), pedido.getId_Pedido()
+                , pedido.getCliente(), pedido.getItens().stream()
+                        .map(PedidoItemResponse::new).toList()
+                ,pedido.getValor_customizacao()
+                , pedido.getValor_total(), pedido.getStatus()
+                , pedido.getFrete(), pedido.getData_pedido());
     }
 }

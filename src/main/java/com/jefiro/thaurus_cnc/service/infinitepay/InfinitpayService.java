@@ -1,10 +1,12 @@
-package com.jefiro.thaurus_cnc.service;
+package com.jefiro.thaurus_cnc.service.infinitepay;
 
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayDTO;
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayItens;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
+import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
+import com.jefiro.thaurus_cnc.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -27,27 +29,42 @@ public class InfinitpayService {
         this.webClient = builder.baseUrl("https://api.infinitepay.io/invoices/public/checkout/links").build();
     }
 
-    public Mono<String> gerarLink(Long pedidoId) {
-        PedidoResponse pedido = pedidoService.get(pedidoId);
+    private Pedido manipulaPedido(Long id, Double valorAdicinal) {
+        Pedido pedido = pedidoService.get(id);
 
-        if (pedido.status().equals(StatusPedido.LAYOUT_PENDING)){
+        if (valorAdicinal != null) {
+            pedido.setValor_customizacao(valorAdicinal);
+            pedido.setValor_total(pedido.getValor_total() + valorAdicinal);
+            pedido = pedidoService.upSimples(pedido);
+        }
+        return pedido;
+    }
+
+    public Mono<String> gerarLink(Long pedidoId, Double valorAdicinal) {
+        Pedido pedido = manipulaPedido(pedidoId, valorAdicinal);
+
+        if (pedido.getStatus().equals(StatusPedido.LAYOUT_PENDING)) {
             throw new StatusInvalidoException("Seu Layout ainda não foi aprovado.");
         }
         List<InfinitypayItens> items = new ArrayList<>(
-                pedido.itens().stream()
+                pedido.getItens().stream()
                         .map(item -> new InfinitypayItens(
-                                item.quantidade(),
-                                item.variante().getValor(),
-                                item.nome_Produto()
+                                item.getQuantidade(),
+                                item.getVariante().getValor(),
+                                item.getProduto().getNome()
                         ))
                         .toList()
         );
 
-        items.add(new InfinitypayItens(1, pedido.frete().valor_frete(), "Frete: " + pedido.frete().metodo()));
+        items.add(new InfinitypayItens(1, pedido.getFrete().valor_frete(), "Frete: " + pedido.getFrete().metodo()));
+
+        if (pedido.getValor_customizacao() != null) {
+            items.add(new InfinitypayItens(1, pedido.getValor_customizacao(), "Valores referente a costumiações adicional "));
+        }
 
         InfinitypayDTO infinitypayDTO = new InfinitypayDTO(
                 items,
-                pedido.id_Pedido(),
+                pedido.getId_Pedido(),
                 infinitypayConfig.getHandle(),
                 infinitypayConfig.getRedirectUrl(),
                 infinitypayConfig.getWebhookUrl()

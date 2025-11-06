@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.dto.pedido;
+package com.jefiro.thaurus_cnc.dto.pedido.item;
 
 import com.jefiro.thaurus_cnc.model.PedidoItem;
 import com.jefiro.thaurus_cnc.model.Variante;

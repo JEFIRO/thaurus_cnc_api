@@ -29,7 +29,7 @@ public class Pedido {
     private List<PedidoItem> itens;
 
     private Double valor_total;
-
+    private Double valor_customizacao;
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
