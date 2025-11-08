@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public class PedidoItem {
     @ManyToOne
     private Produto produto;
     @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    @ToString.Exclude
     private Pedido pedido;
     @ManyToOne
     private Variante variante;
@@ -29,6 +32,14 @@ public class PedidoItem {
     private Double valor;
 
     public PedidoItem(Produto produto, Variante variante, Map<String, Object> personalizacao, Integer quantidade) {
+        this.personalizacao = personalizacao;
+        this.quantidade = quantidade;
+        this.valor = variante.getValor() * quantidade;
+        this.produto = produto;
+        this.variante = variante;
+    }
+    public PedidoItem(Produto produto, Variante variante, Map<String, Object> personalizacao, Integer quantidade,Pedido pedido) {
+        this.pedido = pedido;
         this.personalizacao = personalizacao;
         this.quantidade = quantidade;
         this.valor = variante.getValor() * quantidade;

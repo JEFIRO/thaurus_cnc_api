@@ -1,18 +1,19 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.Frete;
+import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 @Data
-@AllArgsConstructor
-
 @Table
 @Entity
 public class Pedido {
@@ -26,7 +27,9 @@ public class Pedido {
     private Cliente cliente;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PedidoItem> itens;
+    @ToString.Exclude
+    private List<PedidoItem> itens = new ArrayList<>();
+
 
     private Double valor_total;
     private Double valor_customizacao;
@@ -35,6 +38,12 @@ public class Pedido {
 
     @Embedded
     private Frete frete;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pagamentos_id", referencedColumnName = "id")
+    @ToString.Exclude
+    private Pagamentos pagamentos;
+
     private LocalDateTime data_pedido;
     private LocalDateTime data_finalizacao;
     private boolean ativo;

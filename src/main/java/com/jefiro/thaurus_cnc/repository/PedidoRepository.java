@@ -18,4 +18,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query(value = "SELECT * FROM pedido WHERE ativo = true AND id = :id", nativeQuery = true)
     Optional<Pedido> getAtivos(Long id);
 
+    @Query(value = "SELECT * FROM pedido WHERE ativo = true AND id_pedido = :uuid", nativeQuery = true)
+    Optional<Pedido> findById_Pedido(@Param("uuid") String uuid);
+
 }

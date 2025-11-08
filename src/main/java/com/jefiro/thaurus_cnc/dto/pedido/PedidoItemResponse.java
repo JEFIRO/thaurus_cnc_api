@@ -9,7 +9,7 @@ public record PedidoItemResponse(
         Long id_item,
         Long id_produto,
         String nome_Produto,
-        Variante variante,
+        VarianteResponse variante,
         Map<String, Object> personalizacao,
         Integer quantidade,
         Double valor) {
@@ -17,7 +17,7 @@ public record PedidoItemResponse(
         this(item.getId_item(),
                 item.getProduto().getId(),
                 item.getProduto().getNome(),
-                item.getVariante(),
+                new VarianteResponse(item.getVariante()),
                 item.getPersonalizacao(),
                 item.getQuantidade(),
                 item.getValor());

@@ -3,7 +3,7 @@ package com.jefiro.thaurus_cnc.model.Infinitepay;
 public enum StatusPagamento {
     PENDING_PAYMENT("Aguardando pagamento"),
     PAYMENT_ENTRY("Pagamento Entrada."),
-    PAYMENT_SUPPLEMENT("Restante pagamento");
+    PAYMENT_COMPLETED("Restante pagamento");
 
     private final String descricao;
 

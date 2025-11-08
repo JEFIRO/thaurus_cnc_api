@@ -10,6 +10,8 @@ import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.*;
+import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.repository.PagamentoRepository;
 import com.jefiro.thaurus_cnc.repository.PedidoRepository;
 import com.jefiro.thaurus_cnc.repository.VarianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class PedidoService {
     private ProdutoService produtoService;
     @Autowired
     private PedidoItemService pedidoItemService;
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
 
     public PedidoResponse newPedido(NewPedido pedido) {
         if (pedido.cliente() == null || pedido.itens() == null) {
@@ -60,6 +64,7 @@ public class PedidoService {
 
 
             PedidoItem item = new PedidoItem(produto, variante, newItem.personalizacao(), newItem.quantidade());
+            item.setPedido(pedidoEntity);
             itens.add(item);
         }
 
@@ -67,11 +72,16 @@ public class PedidoService {
         pedidoEntity.setFrete(pedido.frete());
         pedidoEntity.setValor_total(itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum());
 
+        Pagamentos pagamentos = pagamentoRepository.save(new Pagamentos(pedidoEntity.getValor_total()));
+
+        pedidoEntity.setPagamentos(pagamentos);
+
         pedidoEntity = pedidoRepository.save(pedidoEntity);
 
         return new PedidoResponse(pedidoEntity);
     }
-    public Pedido upSimples(Pedido pedido){
+
+    public Pedido upSimples(Pedido pedido) {
         return pedidoRepository.save(pedido);
     }
 
@@ -140,6 +150,10 @@ public class PedidoService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public Pedido findByUuid(String uuid) {
+        return pedidoRepository.findById_Pedido(uuid).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     public PedidoResponse update(Long pedidoId, PedidoUpdateDTO dto) {

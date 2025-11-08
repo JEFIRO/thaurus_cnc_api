@@ -41,7 +41,7 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(pedidoService.get(id));
+        return ResponseEntity.ok().body(new PedidoResponse(pedidoService.get(id)));
     }
 
     @DeleteMapping("/{id}")

@@ -120,22 +120,22 @@ public class MelhorEnvioService {
         Map<String, Object> requestBody = new HashMap<>();
 
         requestBody.put("from", Map.of("postal_code", "96020360"));
-        requestBody.put("to", Map.of("postal_code", pedido.cliente().getEndereco().getCep()));
+        requestBody.put("to", Map.of("postal_code", pedido.getCliente().getEndereco().getCep()));
 
         List<Map<String, Object>> productList = new ArrayList<>();
-        pedido.itens().forEach(item -> {
+        pedido.getItens().forEach(item -> {
             Map<String, Object> product = new HashMap<>();
-            product.put("id", item.id_produto());
-            product.put("width", item.variante().getMedida_embalagem().getLargura());
-            product.put("height", item.variante().getMedida_embalagem().getAltura());
-            product.put("length", item.variante().getMedida_embalagem().getProfundidade());
+            product.put("id", item.getProduto());
+            product.put("width", item.getVariante().getMedida_embalagem().getLargura());
+            product.put("height", item.getVariante().getMedida_embalagem().getAltura());
+            product.put("length", item.getVariante().getMedida_embalagem().getProfundidade());
             product.put("weight", 0.5);
-            product.put("insurance_value", item.variante().getValor());
-            product.put("quantity", item.quantidade());
+            product.put("insurance_value", item.getVariante().getValor());
+            product.put("quantity", item.getQuantidade());
             productList.add(product);
         });
         requestBody.put("products", productList);
-        
+
         requestBody.put("options", Map.of("receipt", false, "own_hand", false));
         requestBody.put("services", "1,2,18");
 
