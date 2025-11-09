@@ -5,17 +5,14 @@ import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayItens;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
 import com.jefiro.thaurus_cnc.model.Infinitepay.DadosPagamento;
-import com.jefiro.thaurus_cnc.model.Infinitepay.InfinitepayWebhook;
+import com.jefiro.thaurus_cnc.dto.infinity.InfinitepayWebhook;
 import com.jefiro.thaurus_cnc.model.Infinitepay.StatusPagamento;
 import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.model.PedidoItem; // Import necessário
-import com.jefiro.thaurus_cnc.model.StatusPedido;
 // Importe o PagamentoRepository
 import com.jefiro.thaurus_cnc.repository.PagamentoRepository;
 import com.jefiro.thaurus_cnc.service.PedidoService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -52,9 +49,9 @@ public class InfinitpayService {
             diferencaAdicional = valorAdicinal; // A diferença a ser adicionada ao restante
         }
 
-        // 2. Calcular o valor total CORRETO do pedido (Itens + Frete + Customização)
+
         double totalItens = pedido.getItens().stream()
-                .mapToDouble(PedidoItem::getValor) // PedidoItem.valor já inclui quantidade
+                .mapToDouble(PedidoItem::getValor)
                 .sum();
 
         double frete = (pedido.getFrete() != null && pedido.getFrete().valor_frete() != null)
@@ -64,8 +61,6 @@ public class InfinitpayService {
 
         double novoValorTotalPedido = totalItens + frete + customizacao;
 
-        // 3. Atualizar Pedido e Pagamentos se o total mudou
-        // Compara usando uma pequena margem para evitar problemas de ponto flutuante
         if (Math.abs(novoValorTotalPedido - (pedido.getValor_total() != null ? pedido.getValor_total() : 0)) > 0.01 || diferencaAdicional > 0) {
 
             pedido.setValor_total(novoValorTotalPedido);
@@ -82,8 +77,6 @@ public class InfinitpayService {
                 }
                 pagamentoRepository.save(pagamentos); // Salva as mudanças em Pagamentos
             }
-
-            // Salva as mudanças no Pedido (valor_total e valor_customizacao)
             pedido = pedidoService.upSimples(pedido);
         }
 
@@ -102,15 +95,8 @@ public class InfinitpayService {
         Pedido pedido = manipulaPedido(pedidoId, valorAdicinal);
         Pagamentos pagamentos = pedido.getPagamentos();
 
-        /* if (pedido.getStatus().equals(StatusPedido.LAYOUT_PENDING)) {
-            throw new StatusInvalidoException("Seu Layout ainda não foi aprovado.");
-        }*/
-
         List<InfinitypayItens> items = new ArrayList<>();
 
-        // LÓGICA DE PAGAMENTO EM DUAS ETAPAS
-
-        // Se for o PRIMEIRO pagamento (PENDING_PAYMENT)
         if (pagamentos.getStatus().equals(StatusPagamento.PENDING_PAYMENT)) {
 
             // Valor de entrada (50% do total)
@@ -170,33 +156,39 @@ public class InfinitpayService {
 
     public Pagamentos webhook(InfinitepayWebhook payload) {
         Pedido pedido = pedidoService.findByUuid(payload.getOrder_nsu());
-        System.out.println(pedido);
         Pagamentos pagamento = pedido.getPagamentos();
+
+        List<DadosPagamento> dadosPagamentos = pagamento.getDadosPagamentos();
+        if (dadosPagamentos == null) {
+            dadosPagamentos = new ArrayList<>();
+        }
+
+        DadosPagamento novoDado = new DadosPagamento(payload,pagamento);
+
+        dadosPagamentos.add(novoDado);
+        pagamento.setDadosPagamentos(dadosPagamentos);
 
         double valorPago = payload.getAmount();
         pagamento.setValorRestante(pagamento.getValorRestante() - valorPago);
 
-        // Se o status era PENDING_PAYMENT, agora é PAYMENT_ENTRY
+        if (pagamento.getValorPago() == null) {
+            pagamento.setValorPago(0 + valorPago);
+        } else {
+            pagamento.setValorPago(pagamento.getValorPago() + valorPago);
+        }
+
         if (pagamento.getStatus().equals(StatusPagamento.PENDING_PAYMENT)) {
             pagamento.setStatus(StatusPagamento.PAYMENT_ENTRY);
         }
 
-        // Se quitou tudo (ou pagou a mais), marca como completo
-        if (pagamento.getValorRestante() <= 0.01) { // Usando margem de 1 centavo
+        if (pagamento.getValorRestante() <= 0.01) {
             pagamento.setStatus(StatusPagamento.PAYMENT_COMPLETED);
-            pagamento.setValorRestante(0.0); // Zera o restante
+            pagamento.setValorRestante(0.0);
         }
-
-        var dadosPagamento = pagamento.getDadosPagamentos();
-        if (dadosPagamento == null) {
-            dadosPagamento = new ArrayList<>();
-        }
-        dadosPagamento.add(new DadosPagamento(payload));
-        pagamento.setDadosPagamentos(dadosPagamento);
-
 
         return pagamentoRepository.save(pagamento);
     }
+
 
     public Pagamentos get(Long id) {
         return pagamentoRepository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);

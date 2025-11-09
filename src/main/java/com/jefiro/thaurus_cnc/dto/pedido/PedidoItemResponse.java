@@ -1,7 +1,6 @@
 package com.jefiro.thaurus_cnc.dto.pedido;
 
 import com.jefiro.thaurus_cnc.model.PedidoItem;
-import com.jefiro.thaurus_cnc.model.Variante;
 
 import java.util.Map;
 

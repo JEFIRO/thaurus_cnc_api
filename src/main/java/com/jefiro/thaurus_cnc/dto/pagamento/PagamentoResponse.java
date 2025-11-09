@@ -1,6 +1,6 @@
 package com.jefiro.thaurus_cnc.dto.pagamento;
 
-import com.jefiro.thaurus_cnc.model.Infinitepay.DadosPagamento;
+import com.jefiro.thaurus_cnc.dto.infinity.DadosPagamentoResponse;
 import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import com.jefiro.thaurus_cnc.model.Infinitepay.StatusPagamento;
 
@@ -14,21 +14,27 @@ public record PagamentoResponse(
         String pedido_uuid,
         Double valorRestante,
         Double valorTotal,
-        List<DadosPagamento> dadosPagamentos,
+        List<DadosPagamentoResponse> dadosPagamentos,
         StatusPagamento status,
         String observacao,
         LocalDateTime data_cadastro
 ) {
     public PagamentoResponse(Pagamentos pagamentos) {
-        this(pagamentos.getId(),
+        this(
+                pagamentos.getId(),
                 pagamentos.getId_pagamento(),
-                pagamentos.getPedido().getId(),
-                pagamentos.getPedido().getId_Pedido(),
+                pagamentos.getPedido() != null ? pagamentos.getPedido().getId() : null,
+                pagamentos.getPedido() != null ? pagamentos.getPedido().getId_Pedido() : null,
                 pagamentos.getValorRestante(),
                 pagamentos.getValorTotal(),
-                pagamentos.getDadosPagamentos(),
+                pagamentos.getDadosPagamentos() != null
+                        ? pagamentos.getDadosPagamentos().stream()
+                        .map(DadosPagamentoResponse::new)
+                        .toList()
+                        : List.of(),
                 pagamentos.getStatus(),
                 pagamentos.getObservacao(),
-                pagamentos.getData_cadastro());
+                pagamentos.getData_cadastro()
+        );
     }
 }

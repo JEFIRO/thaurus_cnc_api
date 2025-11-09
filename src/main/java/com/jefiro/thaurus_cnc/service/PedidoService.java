@@ -3,10 +3,7 @@ package com.jefiro.thaurus_cnc.service;
 
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteResponse;
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
-import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoItemDTO;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.*;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.model.*;
@@ -70,7 +67,7 @@ public class PedidoService {
 
         pedidoEntity.setItens(itens);
         pedidoEntity.setFrete(pedido.frete());
-        pedidoEntity.setValor_total(itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum());
+        pedidoEntity.setValor_total((itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum())+pedido.frete().valor_frete());
 
         Pagamentos pagamentos = pagamentoRepository.save(new Pagamentos(pedidoEntity.getValor_total()));
 
@@ -118,8 +115,8 @@ public class PedidoService {
         return new PedidoResponse(pedidoEntity);
     }*/
 
-    public List<PedidoResponse> listar() {
-        return pedidoRepository.findAllAtivos().stream().map(PedidoResponse::new).toList();
+    public List<PedidoCard> listar() {
+        return pedidoRepository.findAllAtivos().stream().map(PedidoCard::new).toList();
     }
 
     public Pedido get(Long id) {

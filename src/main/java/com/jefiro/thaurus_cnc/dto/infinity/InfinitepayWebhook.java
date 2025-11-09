@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.model.Infinitepay;
+package com.jefiro.thaurus_cnc.dto.infinity;
 
 
 import lombok.AllArgsConstructor;

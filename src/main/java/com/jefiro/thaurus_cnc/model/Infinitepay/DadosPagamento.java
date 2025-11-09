@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.model.Infinitepay;
 
+import com.jefiro.thaurus_cnc.dto.infinity.InfinitepayWebhook;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +30,8 @@ public class DadosPagamento {
     private Double valorPago;
     private String recibo;
 
-    public DadosPagamento(InfinitepayWebhook webhook) {
+    public DadosPagamento(InfinitepayWebhook webhook, Pagamentos pagamento) {
+        this.pagamento = pagamento;
         this.transaction_nsu = webhook.getTransaction_nsu();
         this.reciboCliente = webhook.getReceipt_url();
         this.formaPagamento = webhook.getCapture_method();

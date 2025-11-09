@@ -1,17 +1,16 @@
 package com.jefiro.thaurus_cnc.controller;
 
+import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoItemDTO;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoCard;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
+import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -20,7 +19,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping
-    public ResponseEntity<?> pedidoRepository(@RequestBody @Valid NewPedido pedido) {
+    public ResponseEntity<?> newPedido(@RequestBody @Valid NewPedido pedido) {
         return ResponseEntity.ok().body(pedidoService.newPedido(pedido));
     }
 //
@@ -44,6 +43,11 @@ public class PedidoController {
         return ResponseEntity.ok().body(new PedidoResponse(pedidoService.get(id)));
     }
 
+    @GetMapping("/payment/{id}")
+    public ResponseEntity<?> findPayment(@PathVariable Long id) {
+        return ResponseEntity.ok().body(new PagamentoResponse(new Pagamentos(pedidoService.get(id))));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return ResponseEntity.ok(pedidoService.delete(id));
@@ -59,11 +63,9 @@ public class PedidoController {
         return ResponseEntity.ok().body(pedidoService.update(id, dto));
     }
 
-
     @GetMapping("/cliente/{id}")
     public ResponseEntity<?> findByPedidoCliente(@PathVariable Long id) {
         return ResponseEntity.ok().body(pedidoService.getPedidoCliente(id));
     }
-
 
 }
