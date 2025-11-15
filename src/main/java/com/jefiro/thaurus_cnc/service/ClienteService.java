@@ -15,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class ClienteService {
 
@@ -38,13 +41,8 @@ public class ClienteService {
         return repository.findByNomeContainingIgnoreCaseAndAtivoTrue(nome, pageable);
     }
 
-    public Page<ClienteResponse> findAll(Integer page, Integer size, String sortBy, String direction) {
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return repository.findAllByAtivoTrue(pageable);
+    public List<ClienteResponse> findAll() {
+        return repository.findAllByAtivoTrue().stream().map(ClienteResponse::new).toList();
     }
 
     public Page<ClienteResponse> findByTelefone(String telefone, int page, int size, String sortBy, String direction) {
@@ -168,6 +166,7 @@ public class ClienteService {
         }
         return null;
     }
+
     public Cliente updateInterno(Long id, ClienteUpdate cliente) {
         if (cliente == null) {
             throw new DadosInvalidosException("Cliente nao pode ser nulo");

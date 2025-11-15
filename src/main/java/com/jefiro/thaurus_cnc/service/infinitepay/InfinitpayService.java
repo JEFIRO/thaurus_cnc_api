@@ -2,6 +2,8 @@ package com.jefiro.thaurus_cnc.service.infinitepay;
 
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayDTO;
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayItens;
+import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
+import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
 import com.jefiro.thaurus_cnc.model.Infinitepay.DadosPagamento;
@@ -154,7 +156,7 @@ public class InfinitpayService {
                 .bodyToMono(String.class);
     }
 
-    public Pagamentos webhook(InfinitepayWebhook payload) {
+    public PagamentoResponse webhook(InfinitepayWebhook payload) {
         Pedido pedido = pedidoService.findByUuid(payload.getOrder_nsu());
         Pagamentos pagamento = pedido.getPagamentos();
 
@@ -186,7 +188,7 @@ public class InfinitpayService {
             pagamento.setValorRestante(0.0);
         }
 
-        return pagamentoRepository.save(pagamento);
+        return new PagamentoResponse(pagamentoRepository.save(pagamento));
     }
 
 

@@ -32,7 +32,7 @@ public class InfinitypayController {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<Pagamentos> receberWebhook(@RequestBody InfinitepayWebhook payload) {
+    public ResponseEntity<PagamentoResponse> receberWebhook(@RequestBody InfinitepayWebhook payload) {
         return ResponseEntity.ok(service.webhook(payload));
     }
 }

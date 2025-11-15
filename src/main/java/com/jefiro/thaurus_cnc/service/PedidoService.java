@@ -6,18 +6,18 @@ import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
 import com.jefiro.thaurus_cnc.dto.pedido.*;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
-import com.jefiro.thaurus_cnc.model.*;
 import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.model.*;
 import com.jefiro.thaurus_cnc.repository.PagamentoRepository;
 import com.jefiro.thaurus_cnc.repository.PedidoRepository;
 import com.jefiro.thaurus_cnc.repository.VarianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -67,7 +67,7 @@ public class PedidoService {
 
         pedidoEntity.setItens(itens);
         pedidoEntity.setFrete(pedido.frete());
-        pedidoEntity.setValor_total((itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum())+pedido.frete().valor_frete());
+        pedidoEntity.setValor_total((itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum()) + pedido.frete().valor_frete());
 
         Pagamentos pagamentos = pagamentoRepository.save(new Pagamentos(pedidoEntity.getValor_total()));
 
@@ -115,8 +115,8 @@ public class PedidoService {
         return new PedidoResponse(pedidoEntity);
     }*/
 
-    public List<PedidoCard> listar() {
-        return pedidoRepository.findAllAtivos().stream().map(PedidoCard::new).toList();
+    public Page<PedidoCardView> listar(Pageable pageable) {
+        return pedidoRepository.listarCards(pageable);
     }
 
     public Pedido get(Long id) {
@@ -199,4 +199,20 @@ public class PedidoService {
     public List<PedidoResponse> getPedidoCliente(Long id) {
         return pedidoRepository.findByClienteId(id).stream().map(PedidoResponse::new).toList();
     }
+
+    public PedidoAbertoResponse getPedidoClienteAberto(Long id) {
+        var pedido = pedidoRepository.findByClienteId(id);
+        return new PedidoAbertoResponse(pedido, pedido.get(0).getCliente());
+    }
+
+    public PedidoResponse setStatusPedido(Long id, String status) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
+        pedido.setStatus(StatusPedido.valueOf(status));
+        return new PedidoResponse(pedidoRepository.save(pedido));
+    }
+
+    public StatusPedido getStatusPedido(Long id) {
+        return pedidoRepository.getStatusPedido(id);
+    }
+
 }

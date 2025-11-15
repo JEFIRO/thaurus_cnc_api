@@ -2,13 +2,13 @@ package com.jefiro.thaurus_cnc.controller;
 
 import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoCard;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
 import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,20 +22,10 @@ public class PedidoController {
     public ResponseEntity<?> newPedido(@RequestBody @Valid NewPedido pedido) {
         return ResponseEntity.ok().body(pedidoService.newPedido(pedido));
     }
-//
-//    @PostMapping("/{id_cliente}")
-//    public ResponseEntity<PedidoResponse> criarPedido(
-//            @PathVariable Long id_cliente,
-//            @RequestBody List<PedidoDTO> pedidosDTO) {
-//
-//        PedidoResponse pedidoCriado = pedidoService.newPedido(id_cliente, pedidosDTO);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCriado);
-//    }
 
     @GetMapping()
-    public ResponseEntity<?> listar() {
-        return ResponseEntity.ok().body(pedidoService.listar());
+    public ResponseEntity<?> listar(Pageable pageable) {
+        return ResponseEntity.ok().body(pedidoService.listar(pageable));
     }
 
     @GetMapping("/{id}")
@@ -68,4 +58,19 @@ public class PedidoController {
         return ResponseEntity.ok().body(pedidoService.getPedidoCliente(id));
     }
 
+    @GetMapping("/cliente/pedidoaberto/{id}")
+    public ResponseEntity<?> findByPedidoClienteAberto(@PathVariable Long id) {
+        return ResponseEntity.ok().body(pedidoService.getPedidoClienteAberto(id));
+    }
+
+    @GetMapping("/status/{id}/{stats}")
+    public ResponseEntity<?> setStatus(@PathVariable Long id, @PathVariable String stats) {
+        return ResponseEntity.ok().body(pedidoService.setStatusPedido(id, stats));
+    }
+
+    @GetMapping("/status/{id}")
+    public ResponseEntity<?> getStatus(@PathVariable Long id) {
+        return ResponseEntity.ok().body(pedidoService.getStatusPedido(id));
+    }
 }
+

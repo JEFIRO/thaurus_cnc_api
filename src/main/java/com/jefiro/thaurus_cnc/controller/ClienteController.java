@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
@@ -66,13 +68,9 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ClienteResponse>> findAll(
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
-    ) {
-        return ResponseEntity.ok(clienteService.findAll(page, size, sortBy, direction));
+    public ResponseEntity<List
+            <ClienteResponse>> findAll() {
+        return ResponseEntity.ok(clienteService.findAll());
     }
 
     @PutMapping("/{id}")
