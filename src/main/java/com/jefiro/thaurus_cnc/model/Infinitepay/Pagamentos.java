@@ -29,9 +29,23 @@ public class Pagamentos {
     @OneToMany(mappedBy = "pagamento", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<DadosPagamento> dadosPagamentos;
+    @Enumerated(EnumType.STRING)
     private StatusPagamento status;
     private String observacao;
     private LocalDateTime data_cadastro;
+
+    @Column(name = "lembretes_primeiro")
+    private Integer lembretеsPrimeiro;
+
+    @Column(name = "ultimo_lembrete_primeiro")
+    private LocalDateTime ultimoLembretePrimeiro;
+
+    @Column(name = "lembretes_segundo")
+    private Integer lembretesSegundo;
+
+    @Column(name = "ultimo_lembrete_segundo")
+    private LocalDateTime ultimoLembreteSegundo;
+
 
     public Pagamentos() {
         this.id_pagamento = UUID.randomUUID().toString();

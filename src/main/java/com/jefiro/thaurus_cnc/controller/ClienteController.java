@@ -83,4 +83,11 @@ public class ClienteController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.delete(id));
     }
+
+
+    @GetMapping("/run")
+    public ResponseEntity<?> run() {
+        clienteService.clienteLembrete();
+        return ResponseEntity.ok().build();
+    }
 }

@@ -31,12 +31,12 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Transactional
     @Query(
             value = """
-        UPDATE pedido
-        SET status = 'CANCLED'
-        WHERE data_pedido < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '30 days'
-          AND status = 'LAYOUT_PENDING'
-          AND ativo = true
-        """,
+                    UPDATE pedido
+                    SET status = 'CANCLED'
+                    WHERE data_pedido < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '30 days'
+                      AND status = 'LAYOUT_PENDING'
+                      AND ativo = true
+                    """,
             nativeQuery = true
     )
     int clearPedidos();
@@ -94,5 +94,65 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     @Query("select p.status from Pedido p where p.id = :id")
     StatusPedido getStatusPedido(Long id);
+
+    @Query(value = """
+    SELECT p.*
+    FROM pedido p
+    JOIN pagamentos pg ON p.pagamentos_id = pg.id
+    WHERE p.ativo = true
+      AND pg.status = 'PENDING_PAYMENT'
+      AND pg.lembretes_primeiro < 3
+      AND (
+            -- 1º lembrete → 24h após o pedido
+            (pg.lembretes_primeiro = 0
+             AND pg.ultimo_lembrete_primeiro IS NULL
+             AND p.data_pedido < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+
+            OR
+
+            -- 2º lembrete → 24h após o primeiro lembrete
+            (pg.lembretes_primeiro = 1
+             AND pg.ultimo_lembrete_primeiro < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+
+            OR
+
+            -- 3º lembrete → 24h após o segundo lembrete
+            (pg.lembretes_primeiro = 2
+             AND pg.ultimo_lembrete_primeiro < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+          )
+      """, nativeQuery = true)
+    List<Pedido> buscarPrimeiroPagamentoPendente();
+
+    @Query(value = """
+    SELECT p.*
+    FROM pedido p
+    JOIN pagamentos pg ON p.pagamentos_id = pg.id
+    WHERE p.ativo = true
+      AND pg.status = 'PAYMENT_ENTRY'
+      AND p.status = 'PREPARING_FOR_DELIVERY'
+      AND pg.valor_pago > 0
+      AND pg.valor_restante > 0
+      AND pg.lembretes_segundo < 3
+      AND (
+            -- 1º lembrete → 24h após o primeiro pagamento (data é do pedido mesmo)
+            (pg.lembretes_segundo = 0
+             AND pg.ultimo_lembrete_segundo IS NULL
+             AND p.data_pedido < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+
+            OR
+
+            -- 2º lembrete
+            (pg.lembretes_segundo = 1
+             AND pg.ultimo_lembrete_segundo < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+
+            OR
+
+            -- 3º lembrete
+            (pg.lembretes_segundo = 2
+             AND pg.ultimo_lembrete_segundo < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '24 hours')
+          )
+      """, nativeQuery = true)
+    List<Pedido> buscarSegundoPagamentoPendente();
+
 
 }

@@ -28,6 +28,7 @@ public class Cliente {
     private Endereco endereco;
     private LocalDateTime data_cadastro;
     private LocalDateTime data_finalizacao;
+    private LocalDateTime ultimo_lembrete_novo_pedido;
     private boolean ativo;
 
     public Cliente(NewCliente dto) {

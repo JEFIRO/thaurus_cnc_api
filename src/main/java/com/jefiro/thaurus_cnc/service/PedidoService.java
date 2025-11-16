@@ -216,12 +216,12 @@ public class PedidoService {
         return pedidoRepository.getStatusPedido(id);
     }
 
-
     @Scheduled(fixedRate = 864000000L)
     public void limparPedidos() {
         System.out.println(pedidoRepository.clearPedidos());
         System.out.println("Executando tarefa a cada 30 dias...");
     }
+
     @Scheduled(fixedRate = 864000000L)
     public void lembreteDePagamento() {
         System.out.println(pedidoRepository.clearPedidos());

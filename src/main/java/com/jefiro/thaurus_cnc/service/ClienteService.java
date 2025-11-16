@@ -13,8 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +32,13 @@ public class ClienteService {
 
     @Autowired
     private ViaCepService viaCepService;
+
+    private final WebClient webClient;
+
+    public ClienteService(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl("https://thaurus-cnc-n8n.1o2rzn.easypanel.host/webhook/clientes").build();
+    }
+
 
     public ClienteResponse findById(Long id) {
         Cliente cliente = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
@@ -70,8 +83,10 @@ public class ClienteService {
 
         Cliente cliente = new Cliente(clienteDTO);
 
-        if (clienteDTO.endereco().getCep() != null) {
-            cliente.setEndereco(getEndereco(clienteDTO));
+        if (clienteDTO.endereco() != null) {
+            if (clienteDTO.endereco().getCep() != null) {
+                cliente.setEndereco(getEndereco(clienteDTO));
+            }
         }
 
         return new ClienteResponse(repository.save(cliente));
@@ -196,5 +211,30 @@ public class ClienteService {
         }
 
         return repository.save(clienteEntity);
+    }
+
+    @Scheduled(fixedRate = 864000000L)
+    public void clienteLembrete() {
+        repository.buscarClientesParaLembreteNovoPedido().forEach(cliente -> {
+
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("remoteJid", cliente.getRemoteJid());
+            map.put("nome", cliente.getNome());
+
+            enviarLembreteCliente(map).subscribe();
+
+            cliente.setUltimo_lembrete_novo_pedido(LocalDateTime.now());
+            repository.save(cliente);
+            System.out.println("Lembrete enviado para " + cliente.getRemoteJid());
+        });
+    }
+
+    private Mono<String> enviarLembreteCliente(Map<String, Object> map) {
+        return webClient.post()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(map)
+                .retrieve()
+                .bodyToMono(String.class);
     }
 }

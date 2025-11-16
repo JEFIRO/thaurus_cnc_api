@@ -3,7 +3,6 @@ package com.jefiro.thaurus_cnc.service.infinitepay;
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayDTO;
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitypayItens;
 import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
-import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
 import com.jefiro.thaurus_cnc.infra.exception.StatusInvalidoException;
 import com.jefiro.thaurus_cnc.model.Infinitepay.DadosPagamento;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,24 @@ public class InfinitpayService {
 
     public InfinitpayService(WebClient.Builder builder) {
         this.webClient = builder.baseUrl("https://api.infinitepay.io/invoices/public/checkout/links").build();
+    }
+
+    public void updateLembretePagamento1(long id) {
+        var pagamento = pagamentoRepository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
+
+        pagamento.setLembretеsPrimeiro(pagamento.getLembretеsPrimeiro() + 1);
+        pagamento.setUltimoLembretePrimeiro(LocalDateTime.now());
+
+        pagamentoRepository.save(pagamento);
+    }
+
+    public void updateLembretePagamento2(long id) {
+        var pagamento = pagamentoRepository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
+
+        pagamento.setLembretesSegundo(pagamento.getLembretesSegundo() + 1);
+        pagamento.setUltimoLembreteSegundo(LocalDateTime.now());
+
+        pagamentoRepository.save(pagamento);
     }
 
     private Pedido manipulaPedido(Long id, Double valorAdicinal) {
@@ -164,7 +182,7 @@ public class InfinitpayService {
             dadosPagamentos = new ArrayList<>();
         }
 
-        DadosPagamento novoDado = new DadosPagamento(payload,pagamento);
+        DadosPagamento novoDado = new DadosPagamento(payload, pagamento);
 
         dadosPagamentos.add(novoDado);
         pagamento.setDadosPagamentos(dadosPagamentos);

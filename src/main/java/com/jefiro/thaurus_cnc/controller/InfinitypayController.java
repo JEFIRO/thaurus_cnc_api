@@ -3,6 +3,7 @@ package com.jefiro.thaurus_cnc.controller;
 import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
 import com.jefiro.thaurus_cnc.dto.infinity.InfinitepayWebhook;
 import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.service.LembreteService;
 import com.jefiro.thaurus_cnc.service.infinitepay.InfinitpayService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -13,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/payment")
 public class InfinitypayController {
+
     @Autowired
     private InfinitpayService service;
+
+    @Autowired
+    private LembreteService lembreteService;
 
     @GetMapping("link/{id}/{value}")
     public ResponseEntity<?> enviarDados(@PathVariable @Valid @NotNull Long id, @PathVariable Double value) {
@@ -34,5 +39,10 @@ public class InfinitypayController {
     @PostMapping("/webhook")
     public ResponseEntity<PagamentoResponse> receberWebhook(@RequestBody InfinitepayWebhook payload) {
         return ResponseEntity.ok(service.webhook(payload));
+    }
+
+    @GetMapping("/run")
+    public void run() {
+        lembreteService.processarLembretes();
     }
 }
