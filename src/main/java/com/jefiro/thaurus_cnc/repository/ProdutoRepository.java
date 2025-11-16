@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.repository;
 
+import com.jefiro.thaurus_cnc.dto.ProdutoResponse;
 import com.jefiro.thaurus_cnc.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

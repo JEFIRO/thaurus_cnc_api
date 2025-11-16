@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,5 +40,6 @@ public class Variante {
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private Produto produto;
 }

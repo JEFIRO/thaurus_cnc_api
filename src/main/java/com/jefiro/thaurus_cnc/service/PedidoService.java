@@ -14,6 +14,7 @@ import com.jefiro.thaurus_cnc.repository.VarianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -213,6 +214,18 @@ public class PedidoService {
 
     public StatusPedido getStatusPedido(Long id) {
         return pedidoRepository.getStatusPedido(id);
+    }
+
+
+    @Scheduled(fixedRate = 864000000L)
+    public void limparPedidos() {
+        System.out.println(pedidoRepository.clearPedidos());
+        System.out.println("Executando tarefa a cada 30 dias...");
+    }
+    @Scheduled(fixedRate = 864000000L)
+    public void lembreteDePagamento() {
+        System.out.println(pedidoRepository.clearPedidos());
+        System.out.println("Executando tarefa a cada 30 dias...");
     }
 
 }

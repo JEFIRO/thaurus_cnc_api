@@ -13,6 +13,7 @@ import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.model.PedidoItem; // Import necessário
 // Importe o PagamentoRepository
+import com.jefiro.thaurus_cnc.model.StatusPedido;
 import com.jefiro.thaurus_cnc.repository.PagamentoRepository;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,8 +93,6 @@ public class InfinitpayService {
      * Envia um item de "Sinal" (50%) ou "Restante" (valor que falta).
      */
     public Mono<String> gerarLink(Long pedidoId, Double valorAdicinal) {
-        // manipulaPedido agora garante que pedido.valor_total e pagamentos.valorRestante
-        // estão corretos, mesmo se um valorAdicinal for passado.
         Pedido pedido = manipulaPedido(pedidoId, valorAdicinal);
         Pagamentos pagamentos = pedido.getPagamentos();
 
@@ -181,12 +180,16 @@ public class InfinitpayService {
 
         if (pagamento.getStatus().equals(StatusPagamento.PENDING_PAYMENT)) {
             pagamento.setStatus(StatusPagamento.PAYMENT_ENTRY);
+            pedido.setStatus(StatusPedido.IN_PRODUCTION);
         }
 
         if (pagamento.getValorRestante() <= 0.01) {
             pagamento.setStatus(StatusPagamento.PAYMENT_COMPLETED);
             pagamento.setValorRestante(0.0);
+            pedido.setStatus(StatusPedido.PREPARING_FOR_DELIVERY);
         }
+
+        pedidoService.upSimples(pedido);
 
         return new PagamentoResponse(pagamentoRepository.save(pagamento));
     }

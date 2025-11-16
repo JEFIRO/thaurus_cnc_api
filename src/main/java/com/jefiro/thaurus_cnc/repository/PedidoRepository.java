@@ -3,9 +3,11 @@ package com.jefiro.thaurus_cnc.repository;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoCardView;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -24,6 +26,20 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     @Query(value = "SELECT * FROM pedido WHERE ativo = true AND id_pedido = :uuid", nativeQuery = true)
     Optional<Pedido> findById_Pedido(@Param("uuid") String uuid);
+
+    @Modifying
+    @Transactional
+    @Query(
+            value = """
+        UPDATE pedido
+        SET status = 'CANCLED'
+        WHERE data_pedido < (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '30 days'
+          AND status = 'LAYOUT_PENDING'
+          AND ativo = true
+        """,
+            nativeQuery = true
+    )
+    int clearPedidos();
 
 
     @Query(value = """

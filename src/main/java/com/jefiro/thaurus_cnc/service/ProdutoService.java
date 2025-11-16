@@ -1,6 +1,7 @@
 package com.jefiro.thaurus_cnc.service;
 
 import com.jefiro.thaurus_cnc.dto.ProdutoDTO;
+import com.jefiro.thaurus_cnc.dto.ProdutoResponse;
 import com.jefiro.thaurus_cnc.model.Produto;
 import com.jefiro.thaurus_cnc.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class ProdutoService {
     }
 
 
-    public List<Produto> listar() {
-        return repository.findAllAtivos();
+    public List<ProdutoResponse> listar() {
+        return repository.findAllAtivos().stream().map(ProdutoResponse::new).toList();
     }
 
     public Boolean delete(Long id) {
