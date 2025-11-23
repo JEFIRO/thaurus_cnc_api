@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    @Query(value = "SELECT * FROM pedido WHERE ativo = true", nativeQuery = true)
+    @Query(value = "SELECT * FROM pedido", nativeQuery = true)
     List<Pedido> findAllAtivos();
 
-    @Query(value = "SELECT * FROM pedido WHERE ativo = true AND cliente_id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM pedido", nativeQuery = true)
     List<Pedido> findByClienteId(@Param("id") Long id);
 
-    @Query(value = "SELECT * FROM pedido WHERE ativo = true AND id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM pedido", nativeQuery = true)
     Optional<Pedido> getAtivos(Long id);
 
-    @Query(value = "SELECT * FROM pedido WHERE ativo = true AND id_pedido = :uuid", nativeQuery = true)
+    @Query(value = "SELECT * FROM pedido", nativeQuery = true)
     Optional<Pedido> findById_Pedido(@Param("uuid") String uuid);
 
     @Modifying
