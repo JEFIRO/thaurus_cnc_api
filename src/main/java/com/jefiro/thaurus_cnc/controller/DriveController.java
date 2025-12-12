@@ -1,38 +1,64 @@
 package com.jefiro.thaurus_cnc.controller;
 
-import com.jefiro.thaurus_cnc.service.GoogleDriveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/photo")
 public class DriveController {
-    @Autowired
-    private GoogleDriveService googleDriveService;
+    private static final String UPLOAD_DIR = "public/images/";
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            String fileId = googleDriveService.upload(file);
+            File directory = new File(UPLOAD_DIR);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
 
-            String publicUrl = "https://drive.google.com/uc?export=view&id=" + fileId;
+            String ext = file.getOriginalFilename()
+                    .substring(file.getOriginalFilename().lastIndexOf("."));
 
-            return ResponseEntity.ok(publicUrl);
+
+            String fileName = System.currentTimeMillis() + ext;
+
+            Path filePath = Paths.get(UPLOAD_DIR + fileName);
+            Files.write(filePath, file.getBytes());
+
+            String fileUrl = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/images/")
+                    .path(fileName)
+                    .toUriString();
+
+            return ResponseEntity.ok(Map.of("url", fileUrl));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body("Erro ao enviar imagem: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Erro ao fazer upload");
         }
     }
 
+    @GetMapping
+
     @DeleteMapping("{fileId}")
     public ResponseEntity<?> deleteImg(String fileId) {
-        boolean response = googleDriveService.delete(fileId);
-        if (response) {
+        try {
+
+            Path filePath = Paths.get(fileId);
+            filePath.toFile().delete();
+
             return ResponseEntity.ok().build();
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
