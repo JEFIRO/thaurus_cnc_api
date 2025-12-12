@@ -14,6 +14,7 @@ public record PagamentoResponse(
         String pedido_uuid,
         Double valorRestante,
         Double valorTotal,
+        Double valorPago,
         List<DadosPagamentoResponse> dadosPagamentos,
         StatusPagamento status,
         String observacao,
@@ -27,6 +28,7 @@ public record PagamentoResponse(
                 pagamentos.getPedido() != null ? pagamentos.getPedido().getId_Pedido() : null,
                 pagamentos.getValorRestante(),
                 pagamentos.getValorTotal(),
+                pagamentos.getValorPago(),
                 pagamentos.getDadosPagamentos() != null
                         ? pagamentos.getDadosPagamentos().stream()
                         .map(DadosPagamentoResponse::new)

@@ -202,7 +202,7 @@ public class PedidoService {
     }
 
     public PedidoAbertoResponse getPedidoClienteAberto(Long id) {
-        var pedido = pedidoRepository.findByClienteId(id);
+        var pedido = pedidoRepository.pedidosEmAberto(id);
         return new PedidoAbertoResponse(pedido, pedido.get(0).getCliente());
     }
 
