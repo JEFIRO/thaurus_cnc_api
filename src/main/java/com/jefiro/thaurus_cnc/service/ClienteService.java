@@ -152,6 +152,7 @@ public class ClienteService {
 
             Endereco endereco = viaCepService.gerarEndereco(cep);
 
+
             if (endereco == null || endereco.isErro()) {
                 throw new DadosInvalidosException("CEP inválido: " + cep);
             }
