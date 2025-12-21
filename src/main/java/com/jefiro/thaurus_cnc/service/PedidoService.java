@@ -6,7 +6,7 @@ import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
 import com.jefiro.thaurus_cnc.dto.pedido.*;
 import com.jefiro.thaurus_cnc.infra.exception.DadosInvalidosException;
 import com.jefiro.thaurus_cnc.infra.exception.RecursoNaoEncontradoException;
-import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.model.pagamento.Pagamentos;
 import com.jefiro.thaurus_cnc.model.*;
 import com.jefiro.thaurus_cnc.repository.PagamentoRepository;
 import com.jefiro.thaurus_cnc.repository.PedidoRepository;

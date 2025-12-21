@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.model.Infinitepay;
+package com.jefiro.thaurus_cnc.model.pagamento;
 
 public enum StatusPagamento {
     PENDING_PAYMENT("Aguardando pagamento"),

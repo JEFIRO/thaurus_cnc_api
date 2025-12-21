@@ -4,7 +4,7 @@ import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
-import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.model.pagamento.Pagamentos;
 import com.jefiro.thaurus_cnc.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

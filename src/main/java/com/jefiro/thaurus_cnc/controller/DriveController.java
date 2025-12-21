@@ -47,8 +47,6 @@ public class DriveController {
         }
     }
 
-    @GetMapping
-
     @DeleteMapping("{fileId}")
     public ResponseEntity<?> deleteImg(String fileId) {
         try {

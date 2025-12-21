@@ -1,4 +1,4 @@
-package com.jefiro.thaurus_cnc.model.Infinitepay;
+package com.jefiro.thaurus_cnc.model.pagamento;
 
 import com.jefiro.thaurus_cnc.model.Pedido;
 import jakarta.persistence.*;
@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -26,26 +25,11 @@ public class Pagamentos {
     private Double valorPago;
     private Double valorRestante;
     private Double valorTotal;
-    @OneToMany(mappedBy = "pagamento", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    private List<DadosPagamento> dadosPagamentos;
     @Enumerated(EnumType.STRING)
     private StatusPagamento status;
     private String observacao;
     private LocalDateTime data_cadastro;
-
-    @Column(name = "lembretes_primeiro")
-    private Integer lembretеsPrimeiro;
-
-    @Column(name = "ultimo_lembrete_primeiro")
-    private LocalDateTime ultimoLembretePrimeiro;
-
-    @Column(name = "lembretes_segundo")
-    private Integer lembretesSegundo;
-
-    @Column(name = "ultimo_lembrete_segundo")
-    private LocalDateTime ultimoLembreteSegundo;
-
+    private MetodoPagamento metodoPagamento;
 
     public Pagamentos() {
         this.id_pagamento = UUID.randomUUID().toString();
@@ -68,7 +52,6 @@ public class Pagamentos {
         this.pedido = pedido;
         this.valorRestante = pagamentos.getValorRestante();
         this.valorTotal = pagamentos.getValorTotal();
-        this.dadosPagamentos = pagamentos.getDadosPagamentos();
         this.status = pagamentos.getStatus();
         this.observacao = pagamentos.getObservacao();
         this.data_cadastro = pagamentos.getData_cadastro();

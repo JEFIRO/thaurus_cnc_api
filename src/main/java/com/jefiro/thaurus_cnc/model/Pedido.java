@@ -1,7 +1,7 @@
 package com.jefiro.thaurus_cnc.model;
 
 import com.jefiro.thaurus_cnc.dto.Frete;
-import com.jefiro.thaurus_cnc.model.Infinitepay.Pagamentos;
+import com.jefiro.thaurus_cnc.model.pagamento.Pagamentos;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
