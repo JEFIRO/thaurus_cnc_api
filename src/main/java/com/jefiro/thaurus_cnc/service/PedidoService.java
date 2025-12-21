@@ -70,7 +70,7 @@ public class PedidoService {
         pedidoEntity.setFrete(pedido.frete());
         pedidoEntity.setValor_total((itens.stream().mapToDouble(c -> c.getVariante().getValor()).sum()) + pedido.frete().valor_frete());
 
-        Pagamentos pagamentos = pagamentoRepository.save(new Pagamentos(pedidoEntity.getValor_total()));
+        Pagamentos pagamentos = pagamentoRepository.save(new Pagamentos());
 
         pedidoEntity.setPagamentos(pagamentos);
 
@@ -82,39 +82,6 @@ public class PedidoService {
     public Pedido upSimples(Pedido pedido) {
         return pedidoRepository.save(pedido);
     }
-
-    /*public PedidoResponse newPedido(Long idCliente, List<NewPedido> pedido) {
-        if (idCliente == null || pedido == null) {
-            throw new DadosInvalidosException("idCliente e pedido devem ser informados");
-        }
-
-        ClienteResponse cliente = clienteService.findById(idCliente);
-
-        Pedido pedidoEntity = new Pedido();
-
-        pedidoEntity.setCliente(clienteService.findByRemoteJid(cliente.remoteJid()));
-
-        List<PedidoItem> itens = new ArrayList<>();
-
-
-        for (PedidoItemDTO newItem : pedido.itens()) {
-            Produto produto = produtoService.get(newItem.produto().getId());
-
-            Variante variante = varianteRepository.findById(newItem.variante().getId()).orElseThrow(RecursoNaoEncontradoException::new);
-
-            var dto = new PedidoItemDTO(produto, variante, newItem.personalizacao(), newItem.quantidade());
-            PedidoItem item = new PedidoItem(dto);
-            itens.add(item);
-        }
-
-        pedidoEntity.setItens(itens);
-        pedidoEntity.setFrete(pedido.frete());
-        pedidoEntity.setValor_total(itens.stream().mapToDouble(c->c.getVariante().getValor()).sum());
-
-        pedidoEntity = pedidoRepository.save(pedidoEntity);
-
-        return new PedidoResponse(pedidoEntity);
-    }*/
 
     public Page<PedidoCardView> listar(Pageable pageable) {
         return pedidoRepository.listarCards(pageable);

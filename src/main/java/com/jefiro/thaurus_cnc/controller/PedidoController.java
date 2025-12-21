@@ -1,6 +1,7 @@
 package com.jefiro.thaurus_cnc.controller;
 
 import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResponse;
+import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResquest;
 import com.jefiro.thaurus_cnc.dto.pedido.NewPedido;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoResponse;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoUpdateDTO;
@@ -31,11 +32,6 @@ public class PedidoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(new PedidoResponse(pedidoService.get(id)));
-    }
-
-    @GetMapping("/payment/{id}")
-    public ResponseEntity<?> findPayment(@PathVariable Long id) {
-        return ResponseEntity.ok().body(new PagamentoResponse(new Pagamentos(pedidoService.get(id))));
     }
 
     @DeleteMapping("/{id}")

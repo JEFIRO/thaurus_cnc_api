@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.dto.pagamento;
 
+import com.jefiro.thaurus_cnc.model.pagamento.MetodoPagamento;
 import com.jefiro.thaurus_cnc.model.pagamento.Pagamentos;
 import com.jefiro.thaurus_cnc.model.pagamento.StatusPagamento;
 
@@ -15,6 +16,7 @@ public record PagamentoResponse(
         Double valorPago,
         StatusPagamento status,
         String observacao,
+        MetodoPagamento metodoPagamento,
         LocalDateTime data_cadastro
 ) {
     public PagamentoResponse(Pagamentos pagamentos) {
@@ -28,6 +30,7 @@ public record PagamentoResponse(
                 pagamentos.getValorPago(),
                 pagamentos.getStatus(),
                 pagamentos.getObservacao(),
+                pagamentos.getMetodoPagamento(),
                 pagamentos.getData_cadastro()
         );
     }

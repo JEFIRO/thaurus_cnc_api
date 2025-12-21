@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.model.pagamento;
 
+import com.jefiro.thaurus_cnc.dto.pagamento.PagamentoResquest;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,15 +46,13 @@ public class Pagamentos {
         this.status = StatusPagamento.PENDING_PAYMENT;
     }
 
-    public Pagamentos(Pedido pedido) {
-        Pagamentos pagamentos = pedido.getPagamentos();
-        this.id = pagamentos.getId();
-        this.id_pagamento = pagamentos.getId_pagamento();
-        this.pedido = pedido;
-        this.valorRestante = pagamentos.getValorRestante();
-        this.valorTotal = pagamentos.getValorTotal();
-        this.status = pagamentos.getStatus();
-        this.observacao = pagamentos.getObservacao();
-        this.data_cadastro = pagamentos.getData_cadastro();
+    public Pagamentos(PagamentoResquest pagamentoResquest, Pedido idPedido) {
+        this.pedido = idPedido;
+        this.id_pagamento = UUID.randomUUID().toString();
+        this.data_cadastro = LocalDateTime.now();
+        this.status = StatusPagamento.PAYMENT_COMPLETED;
+        this.valorPago = pagamentoResquest.valorPago();
+        this.observacao = pagamentoResquest.observacao();
+        this.metodoPagamento = MetodoPagamento.valueOf(pagamentoResquest.metodoPagamento());
     }
 }
