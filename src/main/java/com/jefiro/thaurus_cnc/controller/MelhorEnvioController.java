@@ -24,8 +24,8 @@ public class MelhorEnvioController {
     public ResponseEntity<?> calcularFrete(@PathVariable Long id) {
         return ResponseEntity.ok(seuService.calcularFreteComMap(id));
     }
-    @PostMapping("/calcularFrete/{id}")
-    public ResponseEntity<?> calcularFrete(@PathVariable String id, @RequestBody List<CalculaFrete> calculaFrete) {
-        return ResponseEntity.ok(seuService.calcularFrete(calculaFrete,id));
+    @PostMapping("/calcularFrete/{cep}")
+    public ResponseEntity<?> calcularFrete(@PathVariable String cep, @RequestBody List<CalculaFrete> calculaFrete) {
+        return ResponseEntity.ok(seuService.calcularFrete(calculaFrete,cep));
     }
 }

@@ -170,6 +170,10 @@ public class PedidoService {
 
     public PedidoAbertoResponse getPedidoClienteAberto(Long id) {
         var pedido = pedidoRepository.pedidosEmAberto(id);
+        if (pedido.isEmpty()) {
+            List<Pedido> p = new ArrayList<>();
+            return new PedidoAbertoResponse(p, clienteService.findById(id));
+        }
         return new PedidoAbertoResponse(pedido, pedido.get(0).getCliente());
     }
 

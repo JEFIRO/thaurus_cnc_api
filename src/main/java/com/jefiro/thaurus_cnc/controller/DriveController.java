@@ -24,13 +24,12 @@ public class DriveController {
                 directory.mkdirs();
             }
 
-            String ext = file.getOriginalFilename()
-                    .substring(file.getOriginalFilename().lastIndexOf("."));
-
+            String originalName = file.getOriginalFilename();
+            String ext = originalName.substring(originalName.lastIndexOf("."));
 
             String fileName = System.currentTimeMillis() + ext;
 
-            Path filePath = Paths.get(UPLOAD_DIR + fileName);
+            Path filePath = Paths.get(UPLOAD_DIR, fileName);
             Files.write(filePath, file.getBytes());
 
             String fileUrl = ServletUriComponentsBuilder
@@ -46,6 +45,7 @@ public class DriveController {
             return ResponseEntity.status(500).body("Erro ao fazer upload");
         }
     }
+
 
     @DeleteMapping("{fileId}")
     public ResponseEntity<?> deleteImg(String fileId) {

@@ -38,13 +38,6 @@ public class Pagamentos {
         this.status = StatusPagamento.PENDING_PAYMENT;
     }
 
-    public Pagamentos(Double valorTotal) {
-        this.valorTotal = valorTotal;
-        this.valorRestante = valorTotal;
-        this.id_pagamento = UUID.randomUUID().toString();
-        this.data_cadastro = LocalDateTime.now();
-        this.status = StatusPagamento.PENDING_PAYMENT;
-    }
 
     public Pagamentos(PagamentoResquest pagamentoResquest, Pedido idPedido) {
         this.pedido = idPedido;

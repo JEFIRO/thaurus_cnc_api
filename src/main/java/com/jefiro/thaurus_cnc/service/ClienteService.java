@@ -40,9 +40,9 @@ public class ClienteService {
     }
 
 
-    public ClienteResponse findById(Long id) {
-        Cliente cliente = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
-        return new ClienteResponse(cliente);
+    public Cliente findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente nao encontrado"));
+
     }
 
     public Page<ClienteResponse> findByNome(String nome, Integer page, Integer size, String sortBy, String direction) {
@@ -117,11 +117,27 @@ public class ClienteService {
             clienteEntity.setEmail(cliente.email());
         }
         if (cliente.endereco() != null) {
-            clienteEntity.setEndereco(getEndereco(cliente));
+            updateEndereco(clienteEntity.getEndereco(), cliente.endereco());
         }
 
         return new ClienteResponse(repository.save(clienteEntity));
     }
+
+    private Endereco updateEndereco(Endereco enderecoBanco, Endereco enderecoCliente) {
+
+        if (enderecoCliente.getCep() != null) {
+            enderecoBanco.setCep(enderecoCliente.getCep());
+        }
+        if (enderecoCliente.getNumero() != null) {
+            enderecoBanco.setNumero(enderecoCliente.getNumero());
+        }
+        if (enderecoCliente.getComplemento() != null) {
+            enderecoBanco.setComplemento(enderecoCliente.getComplemento());
+        }
+
+        return enderecoBanco;
+    }
+
 
     public boolean delete(Long id) {
         if (id == null) {
