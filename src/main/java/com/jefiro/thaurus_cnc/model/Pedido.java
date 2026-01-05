@@ -46,4 +46,25 @@ public class Pedido {
         this.data_finalizacao = LocalDateTime.now();
         this.ativo = true;
     }
+    public void recalcularTotal() {
+        double subtotal = itens.stream()
+                .mapToDouble(PedidoItem::getValor)
+                .sum();
+
+        if (frete != null)
+            subtotal += frete.valor_frete();
+
+        this.valor_total = subtotal;
+    }
+
+    public void atualizarFrete(Frete frete) {
+        double valorItens = this.valor_total;
+
+        if (this.frete != null)
+            valorItens -= this.frete.valor_frete();
+
+        this.frete = frete;
+        this.valor_total = valorItens + frete.valor_frete();
+    }
+
 }

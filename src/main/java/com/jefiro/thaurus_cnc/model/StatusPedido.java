@@ -10,6 +10,7 @@ public enum StatusPedido {
     PREPARING_FOR_DELIVERY("Preparando para entrega"),
     ON_THE_WAY("A caminho"),
     CANCLED("Cancelado"),
+    COMPLETED("Concluido"),
     DELIVERED("Entregue");
 
     private final String descricao;

@@ -1,6 +1,9 @@
 package com.jefiro.thaurus_cnc.service;
 
 
+import com.jefiro.thaurus_cnc.Notificador.publisher.BuscarPedidoPendentePublisher;
+import com.jefiro.thaurus_cnc.Notificador.publisher.PedidoPublisher;
+import com.jefiro.thaurus_cnc.dto.RelatorioMensalDTO;
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteResponse;
 import com.jefiro.thaurus_cnc.dto.cliente.ClienteUpdate;
 import com.jefiro.thaurus_cnc.dto.pedido.*;
@@ -23,6 +26,10 @@ import java.util.List;
 @Service
 public class PedidoService {
     @Autowired
+    private PedidoPublisher pedidoPublisher;
+    @Autowired
+    private BuscarPedidoPendentePublisher buscarPedidoPendentePublisher;
+    @Autowired
     private PedidoRepository pedidoRepository;
     @Autowired
     private VarianteRepository varianteRepository;
@@ -39,7 +46,6 @@ public class PedidoService {
         if (pedido.cliente() == null || pedido.itens() == null) {
             throw new DadosInvalidosException();
         }
-
         ClienteResponse cliente = null;
 
         try {
@@ -76,11 +82,17 @@ public class PedidoService {
 
         pedidoEntity = pedidoRepository.save(pedidoEntity);
 
+        pedidoPublisher.publishPedidoCriado(pedidoEntity);
+
         return new PedidoResponse(pedidoEntity);
     }
 
     public Pedido upSimples(Pedido pedido) {
         return pedidoRepository.save(pedido);
+    }
+
+    public void updatePedido(Pedido pedido) {
+        pedidoRepository.save(pedido);
     }
 
     public Page<PedidoCardView> listar(Pageable pageable) {
@@ -128,40 +140,46 @@ public class PedidoService {
         if (dto.getStatus() != null)
             pedido.setStatus(StatusPedido.valueOf(dto.getStatus()));
 
-        if (dto.getFrete() != null)
-            pedido.setFrete(dto.getFrete());
-
         if (dto.getItens() != null) {
-            List<PedidoItem> novosItens = dto.getItens().stream().map(i -> {
-                Produto produto = produtoService.get(i.produto_id());
-                Variante variante = produto.getVariantes().stream()
-                        .filter(v -> v.getId().equals(i.variante_id()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Variante não encontrada"));
-                PedidoItem item = new PedidoItem();
-                item.setPedido(pedido);
-                item.setProduto(produto);
-                item.setVariante(variante);
-                item.setPersonalizacao(i.personalizacao());
-                item.setQuantidade(i.quantidade());
-                item.setValor(variante.getValor() * i.quantidade());
-                return item;
-            }).toList();
-
-            pedido.getItens().clear();
-            pedido.getItens().addAll(novosItens);
+            atualizarItens(pedido, dto);
+            pedido.recalcularTotal();
         }
 
-        double total = pedido.getItens().stream()
-                .mapToDouble(PedidoItem::getValor)
-                .sum();
+        if (dto.getFrete() != null) {
+            pedido.atualizarFrete(dto.getFrete());
+        }
 
-        if (pedido.getFrete() != null)
-            total += pedido.getFrete().valor_frete();
+        Pagamentos pagamento = pedido.getPagamentos();
 
-        pedido.setValor_total(total);
+        if (pagamento != null) {
+            pagamento.atualizarComNovoTotal(pedido.getValor_total());
+        }
 
-        return new PedidoResponse(pedidoRepository.save(pedido));
+        var response = new PedidoResponse(pedidoRepository.save(pedido));
+        System.out.println(response.itens());
+        return response;
+    }
+
+    private void atualizarItens(Pedido pedido, PedidoUpdateDTO dto) {
+        List<PedidoItem> novosItens = dto.getItens().stream().map(i -> {
+            Produto produto = produtoService.get(i.produto_id());
+            Variante variante = produto.getVariantes().stream()
+                    .filter(v -> v.getId().equals(i.variante_id()))
+                    .findFirst()
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Variante não encontrada"));
+
+            PedidoItem item = new PedidoItem();
+            item.setPedido(pedido);
+            item.setProduto(produto);
+            item.setVariante(variante);
+            item.setPersonalizacao(i.personalizacao());
+            item.setQuantidade(i.quantidade());
+            item.setValor(variante.getValor() * i.quantidade());
+            return item;
+        }).toList();
+
+        pedido.getItens().clear();
+        pedido.getItens().addAll(novosItens);
     }
 
     public List<PedidoResponse> getPedidoCliente(Long id) {
@@ -187,16 +205,18 @@ public class PedidoService {
         return pedidoRepository.getStatusPedido(id);
     }
 
-    @Scheduled(fixedRate = 864000000L)
+    @Scheduled(cron = "0 0 0 * * *")
     public void limparPedidos() {
         System.out.println(pedidoRepository.clearPedidos());
-        System.out.println("Executando tarefa a cada 30 dias...");
     }
 
-    @Scheduled(fixedRate = 864000000L)
-    public void lembreteDePagamento() {
-        System.out.println(pedidoRepository.clearPedidos());
-        System.out.println("Executando tarefa a cada 30 dias...");
+    @Scheduled(cron = "0 30 8 * * *")
+    public void buscarPedidoComLayoutPendente() {
+        List<Pedido> p = pedidoRepository.buscarPedidosComLayoutPendente();
+        buscarPedidoPendentePublisher.publisherBuscarPedidoPendente(p);
     }
 
+    public RelatorioMensalDTO relatorioMensal() {
+        return pedidoRepository.relatorioMensal().get(0);
+    }
 }

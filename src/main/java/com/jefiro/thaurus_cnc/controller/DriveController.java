@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,16 +11,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-
 @RestController
 @RequestMapping("/photo")
 public class DriveController {
-    private static final String UPLOAD_DIR = "public/images/";
+    @Value("${upload.dir}")
+    private String uploadDir;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            File directory = new File(UPLOAD_DIR);
+            File directory = new File(uploadDir);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -28,8 +29,8 @@ public class DriveController {
             String ext = originalName.substring(originalName.lastIndexOf("."));
 
             String fileName = System.currentTimeMillis() + ext;
+            Path filePath = Paths.get(uploadDir, fileName);
 
-            Path filePath = Paths.get(UPLOAD_DIR, fileName);
             Files.write(filePath, file.getBytes());
 
             String fileUrl = ServletUriComponentsBuilder
@@ -46,18 +47,15 @@ public class DriveController {
         }
     }
 
-
-    @DeleteMapping("{fileId}")
-    public ResponseEntity<?> deleteImg(String fileId) {
+    @DeleteMapping("/{fileName}")
+    public ResponseEntity<?> deleteImg(@PathVariable String fileName) {
         try {
-
-            Path filePath = Paths.get(fileId);
-            filePath.toFile().delete();
-
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.deleteIfExists(filePath);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
-
 }
+

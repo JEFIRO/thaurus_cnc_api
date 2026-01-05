@@ -128,7 +128,7 @@ public class ClienteService {
         if (enderecoCliente.getCep() != null) {
             enderecoBanco.setCep(enderecoCliente.getCep());
         }
-        if (enderecoCliente.getNumero() != null) {
+        if (enderecoCliente.getNumero() != null || enderecoCliente.getNumero().length() > 0) {
             enderecoBanco.setNumero(enderecoCliente.getNumero());
         }
         if (enderecoCliente.getComplemento() != null) {

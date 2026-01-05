@@ -48,4 +48,23 @@ public class Pagamentos {
         this.observacao = pagamentoResquest.observacao();
         this.metodoPagamento = MetodoPagamento.valueOf(pagamentoResquest.metodoPagamento());
     }
+
+
+    public void atualizarComNovoTotal(Double novoTotal) {
+        this.valorTotal = novoTotal;
+
+        if (this.valorPago == null) {
+            this.valorPago = 0.0;
+        }
+
+        this.valorRestante = novoTotal - this.valorPago;
+
+        if (this.valorRestante <= 0) {
+            this.valorRestante = 0.0;
+            this.status = StatusPagamento.PAYMENT_COMPLETED;
+        } else {
+            this.status = StatusPagamento.PENDING_PAYMENT;
+        }
+    }
+
 }

@@ -68,5 +68,10 @@ public class PedidoController {
     public ResponseEntity<?> getStatus(@PathVariable Long id) {
         return ResponseEntity.ok().body(pedidoService.getStatusPedido(id));
     }
+
+    @GetMapping("/relatorio")
+    public ResponseEntity<?> relatorio() {
+        return ResponseEntity.ok().body(pedidoService.relatorioMensal());
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.jefiro.thaurus_cnc.repository;
 
+import com.jefiro.thaurus_cnc.dto.RelatorioMensalDTO;
 import com.jefiro.thaurus_cnc.dto.pedido.PedidoCardView;
 import com.jefiro.thaurus_cnc.model.Pedido;
 import com.jefiro.thaurus_cnc.model.StatusPedido;
@@ -40,6 +41,19 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             nativeQuery = true
     )
     int clearPedidos();
+
+    @Query(
+            value = """
+    SELECT *
+    FROM pedido
+    WHERE data_pedido <
+          (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '1 days'
+      AND status = 'LAYOUT_PENDING'
+      AND ativo = true
+  """,
+            nativeQuery = true
+    )
+    List<Pedido> buscarPedidosComLayoutPendente();
 
 
     @Query(value = """
@@ -96,4 +110,24 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     @Query("select p.status from Pedido p where p.id = :id")
     StatusPedido getStatusPedido(Long id);
+
+    @Query(value = """
+        SELECT
+            date_trunc('month', p.data_pedido)           AS mesRef,
+            TRIM(to_char(p.data_pedido, 'TMMonth YYYY')) AS mesNome,
+            COUNT(DISTINCT p.id)                          AS quantidadePedido,
+            SUM(p.valor_total)                            AS valorTotalPedidos,
+            AVG(p.valor_total)                            AS mediaValorPedido,
+            MAX(p.valor_total)                            AS maiorValorPedido,
+            MIN(p.valor_total)                            AS menorValorPedido,
+            COUNT(DISTINCT c.id)                          AS quantidadeClientes,
+            COUNT(DISTINCT i.id_item)                     AS quantidadeItens
+        FROM pedido p
+        JOIN cliente c     ON c.id = p.cliente_id
+        JOIN pedido_item i ON i.pedido_id = p.id
+        WHERE p.ativo = true
+        GROUP BY mesRef, mesNome
+        ORDER BY mesRef desc 
+    """, nativeQuery = true)
+    List<RelatorioMensalDTO> relatorioMensal();
 }
